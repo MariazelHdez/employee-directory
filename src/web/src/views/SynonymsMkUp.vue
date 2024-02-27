@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import AddTermDialog from '../components/SynonymsMkUp/AddDialog.vue'
+import AddTermDialog from '../components/AddDialog.vue'
 export default {
   components: {
     AddTermDialog,
