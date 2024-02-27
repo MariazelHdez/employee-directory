@@ -7,6 +7,7 @@ import Department from "../components/Department";
 import EmployeeDetail from "../components/EmployeeDetail";
 import EmployeeSearch from "../components/EmployeeSearch";
 import SynonymsMkUp from '@/views/SynonymsMkUp'
+import ExceptionsView from '@/views/ExceptionsView'
 
 Vue.use(VueRouter);
 
@@ -24,6 +25,7 @@ const routes = [
   {
     path: "/muck-up/exceptions",
     name: "Exceptions",
+    component: ExceptionsView
   },
   {
     path: "/muck-up/sorting",
