@@ -6,7 +6,7 @@ import Employees from "../components/Employees";
 import Department from "../components/Department";
 import EmployeeDetail from "../components/EmployeeDetail";
 import EmployeeSearch from "../components/EmployeeSearch";
-
+import SynonymsMkUp from '@/views/SynonymsMkUp'
 
 Vue.use(VueRouter);
 
@@ -15,6 +15,19 @@ const routes = [
     path: "/",
     name: "Home",
     redirect: {name: "Find a government employee"}
+  },
+  {
+    path: "/muck-up/synonyms",
+    name: "Synonyms",
+    component: SynonymsMkUp
+  },
+  {
+    path: "/muck-up/exceptions",
+    name: "Exceptions",
+  },
+  {
+    path: "/muck-up/sorting",
+    name: "Sorting",
   },
   {
     path: "/find-Employee/employee-detail/:department/:full_name",
