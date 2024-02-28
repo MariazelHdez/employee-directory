@@ -8,7 +8,7 @@ import EmployeeDetail from "../components/EmployeeDetail";
 import EmployeeSearch from "../components/EmployeeSearch";
 import SynonymsMkUp from '@/views/SynonymsMkUp'
 import ExceptionsView from '@/views/ExceptionsView'
-
+import SortPositionView from '@/views/SortPositionView'
 Vue.use(VueRouter);
 
 const routes = [
@@ -30,6 +30,7 @@ const routes = [
   {
     path: "/muck-up/sorting",
     name: "Sorting",
+    component: SortPositionView
   },
   {
     path: "/find-Employee/employee-detail/:department/:full_name",
