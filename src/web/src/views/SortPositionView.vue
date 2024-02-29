@@ -2,6 +2,9 @@
   <v-container>
     <v-card>
       <v-card-title>
+        <h3>Sort Positions</h3>
+      </v-card-title>
+      <v-card-title>
         <v-row no-gutters justify="end" align="center">
           <v-col cols="12" md="2" align-self="center">
             <v-btn :disabled="!wasMoved" color="secondary" width="100%" @click="reset">

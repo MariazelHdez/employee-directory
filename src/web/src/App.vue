@@ -33,7 +33,7 @@ box-shadow: 1px 3px 3px 0px rgba(163,163,163,0.33) !important;
         </v-row>
       </v-container>
     </v-main>
-    <FeedbackForm/>
+    <FeedbackForm v-if="showInMockUps()"/>
     <v-footer class="mt-16" flat style="z-index: 10" padless height="70">
       <v-card class="flex " flat tile>
         <v-card-title class="py-16 header-container full-width" id="footer-bg">
@@ -106,8 +106,22 @@ export default {
         toggleMenu: function () {
             this.menuShow = !this.menuShow;
         },
+        showInMockUps() {
+          let show = true;
+
+          if (this.currentRouteName !== 'Synonyms' || this.currentRouteName !== 'Exceptions' || this.currentRouteName == 'Sorting') {
+            show = false;
+          }
+          
+          return show;
+        }
     },
-    components: { IconLoader, FeedbackForm }
+    components: { IconLoader, FeedbackForm },
+    computed: {
+      currentRouteName() {
+        return this.$route.name;
+    }
+    }
 };
 </script>
 

@@ -2,6 +2,9 @@
   <v-container>
     <v-card>
       <v-card-title>
+        <h3>Synonyms</h3>
+      </v-card-title>
+      <v-card-title>
         <v-row no-gutters justify="space-between" align="center">
           <v-col cols="12" md="6">
             <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line
