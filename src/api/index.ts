@@ -5,6 +5,7 @@ import path from 'path';
 import { doHealthCheck } from "./utils/healthCheck";
 import { employeesRouter } from "./routes";
 import * as config from './config';
+import { configureAuthentication } from "./routes/auth";
 
 const app = express();
 const sufixPath = '/index.html';
@@ -45,8 +46,10 @@ app.use(
 app.use(cors({
   origin: config.FRONTEND_URL,
   optionsSuccessStatus: 200,
-  credentials: false
+  credentials: true,
 }));
+
+configureAuthentication(app);
 
 app.get("/api/healthCheck", (req: Request, res: Response) => {
   doHealthCheck(res);
