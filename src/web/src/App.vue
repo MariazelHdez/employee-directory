@@ -15,7 +15,10 @@ box-shadow: 1px 3px 3px 0px rgba(163,163,163,0.33) !important;
             <v-progress-circular :class="loadingClass" indeterminate color="#f3b228" size="20" width="2"
               class="ml-4"></v-progress-circular>
           </v-toolbar-title>
-          
+          <v-spacer></v-spacer>
+          <v-btn v-if="isAuthenticated" @click="logout">
+            Logout
+          </v-btn>
           <div>
           </div>
         </v-row>
@@ -72,7 +75,7 @@ import router from "./router";
 //import { mapState } from "vuex";
 import store from "./store";
 import * as config from "./config";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import IconLoader from "./components/icons/IconLoader.vue";
 import FeedbackForm from "./components/UI/FeedbackForm.vue";
 
@@ -114,13 +117,17 @@ export default {
           }
           
           return show;
-        }
+        },
+        logout() {
+          store.dispatch("signOut");
+        },
     },
     components: { IconLoader, FeedbackForm },
     computed: {
+      ...mapGetters(["isAuthenticated"]),
       currentRouteName() {
         return this.$route.name;
-    }
+      }
     }
 };
 </script>

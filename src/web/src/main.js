@@ -9,7 +9,7 @@ import vuetify from "./plugins/vuetify";
 
 Vue.config.productionTip = false;
 
-axios.defaults.withCredentials = false
+axios.defaults.withCredentials = true;
 
 new Vue({
   router,
