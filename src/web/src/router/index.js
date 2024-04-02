@@ -6,8 +6,11 @@ import Employees from "../components/Employees";
 import Department from "../components/Department";
 import EmployeeDetail from "../components/EmployeeDetail";
 import EmployeeSearch from "../components/EmployeeSearch";
-
-
+import SynonymsMkUp from '@/views/SynonymsMkUp'
+import ExceptionsView from '@/views/ExceptionsView'
+import SortPositionView from '@/views/SortPositionView'
+import store from "../store";
+import LoginView from '@/views/LoginView';
 Vue.use(VueRouter);
 
 const routes = [
@@ -15,6 +18,39 @@ const routes = [
     path: "/",
     name: "Home",
     redirect: {name: "Find a government employee"}
+  },
+  {
+    path: "/muck-up/login",
+    name: "Login",
+    component: LoginView,
+    meta: {
+      requiresAuth: false,
+      isLogin: true,
+    },
+  },
+  {
+    path: "/muck-up/synonyms",
+    name: "Synonyms",
+    component: SynonymsMkUp,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/muck-up/exceptions",
+    name: "Exceptions",
+    component: ExceptionsView,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/muck-up/sorting",
+    name: "Sorting",
+    component: SortPositionView,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/find-Employee/employee-detail/:department/:full_name",
@@ -105,6 +141,33 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
   
+});
+
+router.beforeEach(async (to, from, next) => {
+
+  const requiresAuth = to.meta.requiresAuth || false;
+  const isLogin = to.meta.isLogin || false;
+
+  if (!requiresAuth && !isLogin) {
+    return next();
+  }
+
+  await store.dispatch('checkAuthentication');
+  const isAuthenticated = store.getters.isAuthenticated;
+
+  if (requiresAuth && !isAuthenticated) {
+  // if (requiresAuth) {
+    console.log("You aren't authenticated, redirecting to sign-in");
+    
+    return next('/muck-up/login'); 
+  }
+  if (isLogin && isAuthenticated) {
+    return next('/muck-up/synonyms'); 
+  }
+
+  
+
+  return next();
 });
 
 export default router;

@@ -15,7 +15,10 @@ box-shadow: 1px 3px 3px 0px rgba(163,163,163,0.33) !important;
             <v-progress-circular :class="loadingClass" indeterminate color="#f3b228" size="20" width="2"
               class="ml-4"></v-progress-circular>
           </v-toolbar-title>
-          
+          <v-spacer></v-spacer>
+          <v-btn v-if="isAuthenticated" @click="logout">
+            Logout
+          </v-btn>
           <div>
           </div>
         </v-row>
@@ -33,7 +36,7 @@ box-shadow: 1px 3px 3px 0px rgba(163,163,163,0.33) !important;
         </v-row>
       </v-container>
     </v-main>
-    <FeedbackForm/>
+    <FeedbackForm v-if="showInMockUps()"/>
     <v-footer class="mt-16" flat style="z-index: 10" padless height="70">
       <v-card class="flex " flat tile>
         <v-card-title class="py-16 header-container full-width" id="footer-bg">
@@ -72,7 +75,7 @@ import router from "./router";
 //import { mapState } from "vuex";
 import store from "./store";
 import * as config from "./config";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import IconLoader from "./components/icons/IconLoader.vue";
 import FeedbackForm from "./components/UI/FeedbackForm.vue";
 
@@ -106,8 +109,26 @@ export default {
         toggleMenu: function () {
             this.menuShow = !this.menuShow;
         },
+        showInMockUps() {
+          let show = true;
+
+          if (this.currentRouteName !== 'Synonyms' || this.currentRouteName !== 'Exceptions' || this.currentRouteName == 'Sorting') {
+            show = false;
+          }
+          
+          return show;
+        },
+        logout() {
+          store.dispatch("signOut");
+        },
     },
-    components: { IconLoader, FeedbackForm }
+    components: { IconLoader, FeedbackForm },
+    computed: {
+      ...mapGetters(["isAuthenticated"]),
+      currentRouteName() {
+        return this.$route.name;
+      }
+    }
 };
 </script>
 
