@@ -2,6 +2,7 @@
   <v-container>
     <v-card>
       <v-card-title>
+        {{ newSortPositions }}
         <h3>Sort Positions</h3>
       </v-card-title>
       <v-card-title>
@@ -57,7 +58,7 @@
                 mdi-arrow-all
               </v-icon>
 
-              {{ item.term }} 
+              {{ item.Description + " - " + item.Weight }} 
 
             </td>
           </tr>
@@ -80,6 +81,12 @@
           >
           </v-text-field>
         </v-col>
+        <v-col cols="12">
+          <v-radio-group>
+            <v-radio label="Beginning" value="-1"></v-radio>
+            <v-radio label="End" value="1"></v-radio>
+          </v-radio-group>
+        </v-col>
       </template>
     </AddTermDialog>
   </v-container>
@@ -88,6 +95,7 @@
   <script>
   import draggable from "vuedraggable";
   import AddTermDialog from '../components/AddDialog.vue';
+  import { mapActions, mapGetters } from "vuex";
   export default {
     components: {
       draggable,
@@ -108,24 +116,17 @@
             value: 'term',
           },
         ],
-        terms: [
-          { term: "Administrative assistante" },
-          { term: "Administrative Coordinator" },
-          { term: "Administrative Finance Clerk" },
-          { term: "Administrative Research Assistant" },
-          { term: "Admission/Assessment Coordinator" },
-          { term: "Wildlife Harvest Biologist" },
-          { term: "Wildlife Harvest Specialist" },
-          { term: "Wildlife Viewing Specialist" },
-          { term: "Airports Duty Manager" },
-          { term: "YGS Student" },
-          { term: "YHC - Community Manager RR" },
-          { term: "YHC - Housing Manager Watson Lake" },
-        ],
+        terms: [],
         backupTerms: [],
       };
     },
     methods: {
+      ...mapActions({
+        getSortPositions: "getSortPositions",
+        addToNewSortPositions: "addToNewSortPositions",
+        cleanNewSortPositions: "cleanNewSortPositions",
+        reorderPositions: "postNewSortPositions",
+      }),
       openNewTerm() {
         this.showNewTerm = true;
         this.newTerm = "";
@@ -151,23 +152,39 @@
       switchItems(oldIndex, newIndex) {
         const items = [...this.terms];
         const oldItem = items[newIndex];
-        
+        const oldWeight = items[oldIndex].Weight;
+
         items[newIndex] = this.terms[oldIndex];
+        items[newIndex].Weight = oldItem.Weight;
         items[oldIndex] = oldItem;
+        items[oldIndex].Weight = oldWeight;
 
         this.terms = [...items];
+
+        this.addToNewSortPositions({ position: items[newIndex] });
+        this.addToNewSortPositions({ position: items[oldIndex] });
       },
       reset() {
         this.terms = [ ...this.backupTerms ];
         this.wasMoved = false;
+        this.cleanNewSortPositions();
       },
       saveChanges() {
         this.backupTerms = [ ...this.terms ];
         this.wasMoved = false;
+        // this.reorderPositions();
       },
     },
-    mounted() {
-      this.backupTerms = [ ...this.terms ];
+    computed: {
+      ...mapGetters([
+        "sortPositions",
+        "newSortPositions",
+      ]),
+    },
+    async created() {
+      await this.getSortPositions();
+      this.terms = [ ...this.sortPositions ];
+      this.backupTerms = [ ...this.sortPositions ];
     },
   };
   </script>
