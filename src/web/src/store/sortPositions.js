@@ -13,8 +13,8 @@ const getters = {
 const actions = {
     async getSortPositions({ commit }) {
         try {
-           const resp = await axios.get(SORT_POSITIONS);
-           const data = resp.data;
+            const resp = await axios.get(SORT_POSITIONS);
+            const data = resp.data;
             console.log(resp.data);
 
             if (data?.success) {
@@ -22,6 +22,38 @@ const actions = {
             }
         } catch (error) {
             console.log(error);
+        }
+    },
+    async insertSortPosition({ dispatch }, { sortPosition }) {
+        try {
+            const resp = await axios.post(SORT_POSITIONS, sortPosition);
+            const data = resp.data;
+
+            console.log(resp.data);
+
+            if (data?.success) {
+                console.log(data.message);
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            dispatch("getSortPositions");
+        }
+    },
+    async deleteSortPosition({ dispatch }, sortPositionId) {
+        try {
+            const resp = await axios.delete(`${SORT_POSITIONS}/${sortPositionId}`,);
+            const data = resp.data;
+
+            console.log(resp.data);
+
+            if (data?.success) {
+                console.log(data.message);
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            dispatch("getSortPositions");
         }
     },
     addToNewSortPositions({ commit, getters }, { position }) {
@@ -46,11 +78,10 @@ const actions = {
             const models = [ ...getters.newSortPositions ]
 
             const resp = await axios.post(StaffDirectoryUrl+"/ReorderPositions", { Models: models });
-            
-            console.log(resp);
-            console.log(resp.data);
- 
+            //const resp = await axios.post(SORT_POSITIONS, { Models: models });
+            const data = resp?.data;
             if (data?.success) {
+                console.log(data.message);
             }
         } catch (error) {
             console.log(error);

@@ -2,7 +2,6 @@
   <v-container>
     <v-card>
       <v-card-title>
-        {{ newSortPositions }}
         <h3>Sort Positions</h3>
       </v-card-title>
       <v-card-title>
@@ -51,15 +50,28 @@
             :key="index"
           >
             <td>
-              <v-icon
-                small
-                class="page__grab-icon mr-5"
-              >
-                mdi-arrow-all
-              </v-icon>
+              <v-row no-gutters>
+                <v-icon
+                  small
+                  class="page__grab-icon mr-5"
+                >
+                  mdi-arrow-all
+                </v-icon>
 
-              {{ item.Description + " - " + item.Weight }} 
-
+                <div class="align-content-center">{{ item.Description }}</div>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="error"
+                  x-small
+                  @click="removeItem(item.Id)"
+                >
+                  <v-icon
+                    small
+                  >
+                    mdi-delete
+                  </v-icon>
+                </v-btn>
+              </v-row>
             </td>
           </tr>
         </draggable>
@@ -77,15 +89,9 @@
         <v-col cols="12">
           <v-text-field
             label="Term*"
-            v-model="newTerm"
+            v-model="newItem.Description"
           >
           </v-text-field>
-        </v-col>
-        <v-col cols="12">
-          <v-radio-group>
-            <v-radio label="Beginning" value="-1"></v-radio>
-            <v-radio label="End" value="1"></v-radio>
-          </v-radio-group>
         </v-col>
       </template>
     </AddTermDialog>
@@ -107,6 +113,10 @@
         showNewTerm: false,
         drag: false,
         newTerm: "",
+        newItem: {
+          Description: "",
+          Weight: 0
+        },
         headers: [
           {
             text: 'Term',
@@ -126,23 +136,27 @@
         addToNewSortPositions: "addToNewSortPositions",
         cleanNewSortPositions: "cleanNewSortPositions",
         reorderPositions: "postNewSortPositions",
+        insertSortPosition: "insertSortPosition",
+        deleteSortPosition: "deleteSortPosition",
       }),
       openNewTerm() {
         this.showNewTerm = true;
-        this.newTerm = "";
+        this.newItem.Description = "";
       },
       closeNewTerm() {
         this.showNewTerm = false;
-        this.newTerm = "";
+        this.newItem.Description = "";
       },
       saveTerm() {
-        const trimmed = this.newTerm.trim();
+        const trimmed = this.newItem.Description.trim();
         
         if (trimmed.length > 0) {
-          this.terms.push({ term: trimmed });
-          this.wasMoved = true;
-          this.closeNewTerm();
+          this.newItem.Description = trimmed;
+          this.insertSortPosition({sortPosition: { ...this.newItem } });
         }
+      },
+      removeItem (sortPositionId) {
+        this.deleteSortPosition(sortPositionId);
       },
       checkMovement(e) {
         this.wasMoved = true;
@@ -170,9 +184,7 @@
         this.cleanNewSortPositions();
       },
       saveChanges() {
-        this.backupTerms = [ ...this.terms ];
-        this.wasMoved = false;
-        // this.reorderPositions();
+        this.reorderPositions();
       },
     },
     computed: {
@@ -180,6 +192,15 @@
         "sortPositions",
         "newSortPositions",
       ]),
+    },
+    watch: {
+      sortPositions: function () {
+        this.terms = [ ...this.sortPositions ];
+        this.backupTerms = [ ...this.sortPositions ];
+        this.wasMoved = false;
+        this.cleanNewSortPositions();
+        this.closeNewTerm();
+      }
     },
     async created() {
       await this.getSortPositions();
