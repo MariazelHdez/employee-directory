@@ -63,7 +63,7 @@
                 <v-btn
                   color="error"
                   x-small
-                  @click="removeItem(item.Id)"
+                  @click="showRemoveDialog(item)"
                 >
                   <v-icon
                     small
@@ -95,6 +95,13 @@
         </v-col>
       </template>
     </AddTermDialog>
+    <ConfirmDialog
+      :show="showRemove"
+      :params="paramsRemove"
+      :cancel="cancelDelete"
+      :accept="acceptDelete"
+    >
+    </ConfirmDialog>
   </v-container>
   </template>
   
@@ -102,13 +109,18 @@
   import draggable from "vuedraggable";
   import AddTermDialog from '../components/AddDialog.vue';
   import { mapActions, mapGetters } from "vuex";
+  import ConfirmDialog from "../components/ConfirmDialog.vue";
   export default {
     components: {
       draggable,
-      AddTermDialog
+      AddTermDialog,
+      ConfirmDialog,
     },
     data() {
       return {
+        showRemove: false,
+        paramsRemove: { title: "Confirm delete", message: "do you really want to delete this item permanently? " },
+        currentToRemove: null,
         wasMoved: false,
         showNewTerm: false,
         drag: false,
@@ -139,6 +151,20 @@
         insertSortPosition: "insertSortPosition",
         deleteSortPosition: "deleteSortPosition",
       }),
+      showRemoveDialog(item) {
+        this.showRemove = true;
+        this.currentToRemove = item;
+      },
+      cancelDelete() {
+        this.showRemove = false;
+        this.currentToRemove = null;
+
+      },
+      acceptDelete() {
+        if (this.currentToRemove?.Id) {
+          this.deleteSortPosition(this.currentToRemove.Id);
+        }
+      },
       openNewTerm() {
         this.showNewTerm = true;
         this.newItem.Description = "";
@@ -154,9 +180,6 @@
           this.newItem.Description = trimmed;
           this.insertSortPosition({sortPosition: { ...this.newItem } });
         }
-      },
-      removeItem (sortPositionId) {
-        this.deleteSortPosition(sortPositionId);
       },
       checkMovement(e) {
         this.wasMoved = true;
@@ -200,6 +223,8 @@
         this.wasMoved = false;
         this.cleanNewSortPositions();
         this.closeNewTerm();
+        this.showRemove = false;
+        this.currentToRemove = null;
       }
     },
     async created() {
