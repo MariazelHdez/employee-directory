@@ -22,6 +22,7 @@ const actions = {
             }
         } catch (error) {
             console.log(error);
+            dispatch("showSnackBar", { message: "Error to get terms", status: "error" });
         }
     },
     async insertSortPosition({ dispatch }, { sortPosition }) {
@@ -32,10 +33,11 @@ const actions = {
             console.log(resp.data);
 
             if (data?.success) {
-                console.log(data.message);
+                dispatch("showSnackBar", { message: data.message, status: "success" });
             }
         } catch (error) {
             console.log(error);
+            dispatch("showSnackBar", { message: "error to insert", status: "error" });
         } finally {
             dispatch("getSortPositions");
         }
@@ -48,10 +50,11 @@ const actions = {
             console.log(resp.data);
 
             if (data?.success) {
-                console.log(data.message);
+                dispatch("showSnackBar", { message: data.message, status: "success" });
             }
         } catch (error) {
             console.log(error);
+            dispatch("showSnackBar", { message: "error to delete", status: "error" });
         } finally {
             dispatch("getSortPositions");
         }
@@ -81,10 +84,11 @@ const actions = {
             //const resp = await axios.post(SORT_POSITIONS, { Models: models });
             const data = resp?.data;
             if (data?.success) {
-                console.log(data.message);
+                dispatch("showSnackBar", { message: data.message, status: "success" });
             }
         } catch (error) {
             console.log(error);
+            dispatch("showSnackBar", { message: "Error to update order", status: "error" });
         } finally {
             dispatch("getSortPositions");
         }
