@@ -9,11 +9,11 @@ const getters = {
     snackbarColor: state => state.snackbarColor,
 };
 const actions = {
-    showSnackBar({ commit }, { message, show, color }) {
+    showSnackBar({ commit }, { message, status }) {
         try {
-            commit("SET_SNACKBAR", show);
+            commit("SET_SNACKBAR", true);
             commit("SET_SNACKBAR_MESSAGE", message);
-            commit("SET_SNACKBAR_COLOR", color);
+            commit("SET_SNACKBAR_COLOR", status);
             
         } catch (error) {
             console.log(error);
