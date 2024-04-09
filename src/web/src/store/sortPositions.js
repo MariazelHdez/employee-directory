@@ -4,24 +4,42 @@ import { StaffDirectoryUrl } from "../config";
 
 const state = {
     sortPositions: [],
-    newSortPositions: []
+    newSortPositions: [],
+    page: 1,
+    busy: false,
+    stopFetch: false,
 };
 const getters = {
     sortPositions: state => state.sortPositions,
     newSortPositions: state => state.newSortPositions,
+    page: state => state.page,
+    busy: state => state.busy,
+    stopFetch: state => state.stopFetch,
 };
 const actions = {
-    async getSortPositions({ commit }) {
+    async getSortPositions({ commit, getters }) {
         try {
-            const resp = await axios.get(SORT_POSITIONS);
-            const data = resp.data;
-            console.log(resp.data);
+            if (!getters.stopFetch) {
+                commit("SET_BUSY", true);
+                const resp = await axios.get(SORT_POSITIONS + "?index=" + getters.page);
+                const data = resp.data;
+                console.log(resp.data);
 
-            if (data?.success) {
-                commit("SET_SORT_POSITIONS", resp.data.data);
+                if (data?.success) {
+                    const newData = resp.data.data;
+                    if (newData?.length > 0) {
+                        commit("SET_SORT_POSITIONS", [ ...getters.sortPositions, ...newData ]);
+                        commit("SET_PAGE", getters.page+1);
+                        commit("SET_BUSY", false);
+                    } else {
+                        commit("SET_STOP_FETCH", true);
+                        commit("SET_BUSY", false);
+                    }
+                }
             }
         } catch (error) {
             console.log(error);
+            commit("SET_BUSY", false);
             dispatch("showSnackBar", { message: "Error to get terms", status: "error" });
         }
     },
@@ -100,6 +118,13 @@ const actions = {
             console.log(error);
         }
     },
+    reloadFetch({ commit }) {
+        try {
+            commit("SET_STOP_FETCH", false);
+        } catch (error) {
+            console.log(error);
+        }
+    },
 };
 const mutations = {
     SET_SORT_POSITIONS(state, sortPositions) {
@@ -107,6 +132,15 @@ const mutations = {
     },
     SET_NEW_SORT_POSITIONS(state, sortPositions) {
         state.newSortPositions = sortPositions;
+    },
+    SET_PAGE(state, page) {
+        state.page = page;
+    },
+    SET_BUSY(state, busy) {
+        state.busy = busy;
+    },
+    SET_STOP_FETCH(state, stopFetch) {
+        state.stopFetch = stopFetch;
     },
 };
 
