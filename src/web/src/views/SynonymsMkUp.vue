@@ -113,10 +113,22 @@
                 Add field
               </v-btn>
             </v-col>
-            <v-col cols="12" class="mb-2">
-              <v-chip 
-                close 
-                v-for="item, index of newTerm.fields" 
+            <v-col cols="12" class="mb-2" v-if="actionType === 'C'">
+              <v-chip
+                close
+                v-for="item, index of newTerm.fields"
+                @click:close="deleteChip('field', index)"
+                :key="index"
+                :disabled="item.disabled"
+              >
+                {{ item.value }}
+              </v-chip>
+            </v-col>
+
+            <v-col cols="12" class="mb-2" v-else>
+              <v-chip
+                close
+                v-for="item, index of newTerm.fields"
                 @click:close="deleteChip('field', index)"
                 :key="index"
               >
@@ -212,18 +224,29 @@ export default {
     filterFields(fields){
       let filteredElements = fields.filter(item => item.term_id === this.selectedTerm);
       const clean = filteredElements.map(({ term_id, term, ...rest }) => rest);
+      const fieldIds = clean.map(item => item.field_id);
 
-      let selectFields = clean.map(({ id, field_id, ...rest }) => ({
+      /*let selectFields = clean.map(({ id, field_id, ...rest }) => ({
           ...rest,
           value: id,
           text: field_id
-      }));
+      }));*/
 
-      return selectFields;
+      return fieldIds;
     },
     changTerm(){
-
+      console.log(this.synonymFields);
       this.fieldTerms = this.filterFields(this.synonymFields);
+
+      this.fieldTerms.forEach(value => {
+        const trimmed = value.trim();
+        if (trimmed.length > 0) {
+          this.newTerm.fields.push({ value: trimmed, disabled: true });
+          this.newField = "";
+        }
+      });
+
+      console.log(this.newTerm);
 
     },
     showFieldCreate(){
@@ -314,7 +337,13 @@ export default {
     addToFields() {
       const trimmed = this.newField.trim();
       if (trimmed.length > 0) {
-        this.newTerm.fields.push(trimmed);
+
+        if(this.actionType == 'C'){
+          this.newTerm.fields.push({ value: trimmed, disabled: false });
+        }else{
+          this.newTerm.fields.push(trimmed);
+        }
+
         this.newField = "";
       }
     },
@@ -341,11 +370,35 @@ export default {
     },
     createSynonym() {
 
-      if (this.actionType = 'U'){
+      if (this.actionType == 'U'){
         this.updateSynonym();
-      }else if(this.actionType = 'C'){
 
-        if(this.newSynonym == ""){
+        this.closeNewTerm();
+      }else if(this.actionType == 'C'){
+        this.saveSynonymFields();
+
+        this.closeNewTerm();
+      }
+
+    },
+    saveSynonym(dataSynoyms) {
+      axios
+        .post(SYNONYMS_CREATE, dataSynoyms)
+        .then((resp) => {
+          console.log(resp);
+        })
+        .catch((err) => console.error(err));
+    },
+    saveField(dataFields) {
+      axios
+        .post(SYNONYMS_FIELDS_CREATE, dataFields)
+        .then((resp) => {
+          console.log(resp);
+        })
+        .catch((err) => console.error(err));
+    },
+    saveSynonymFields() {
+      if(this.newSynonym == ""){
           this.showMessageSave = true;
         }else{
           this.showMessageSave = false;
@@ -380,12 +433,14 @@ export default {
                 if (this.newTerm.fields.length > 0) {
 
                   this.newTerm.fields.forEach(value => {
-                    let dataFields = {
-                      term_id: termId,
-                      field_id: value
-                    }
+                    if(value.disabled == false){
+                      let dataFields = {
+                        term_id: termId,
+                        field_id: value.value
+                      }
 
-                    this.saveField(dataFields);
+                      this.saveField(dataFields);
+                    }
                   });
 
                 }
@@ -408,12 +463,14 @@ export default {
             if (this.newTerm.fields.length > 0) {
 
               this.newTerm.fields.forEach(value => {
-                let dataFields = {
-                  term_id: termId,
-                  field_id: value
-                }
+                if(value.disabled == false){
+                  let dataFields = {
+                    term_id: termId,
+                    field_id: value.value
+                  }
 
-                this.saveField(dataFields);
+                  this.saveField(dataFields);
+                }
               });
 
             }
@@ -421,24 +478,6 @@ export default {
           }
 
         }
-      }
-
-    },
-    saveSynonym(dataSynoyms) {
-      axios
-        .post(SYNONYMS_CREATE, dataSynoyms)
-        .then((resp) => {
-          console.log(resp);
-        })
-        .catch((err) => console.error(err));
-    },
-    saveField(dataFields) {
-      axios
-        .post(SYNONYMS_FIELDS_CREATE, dataFields)
-        .then((resp) => {
-          this.closeNewTerm();
-        })
-        .catch((err) => console.error(err));
     },
     updateSynonym() {
 
