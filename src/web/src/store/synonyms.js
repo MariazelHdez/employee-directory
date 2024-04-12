@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SYNONYMS, TERMS, SYNONYMS_DELETE, SYNONYMS_FIELDS } from "../urls";
+import { SYNONYMS, TERMS, SYNONYMS_DELETE, SYNONYMS_FIELDS, SYNONYMS_FIELDS_DELETE_TERM } from "../urls";
 import { StaffDirectoryUrl } from "../config";
 
 const state = {
@@ -13,7 +13,7 @@ const getters = {
     fields: state => state.fields,
 };
 const actions = {
-    async getSynonyms({ commit }) {
+    async getSynonyms({ dispatch, commit }) {
         try {
             const resp = await axios.get(SYNONYMS);
             const data = resp.data;
@@ -45,7 +45,7 @@ const actions = {
             dispatch("showSnackBar", { message: "Error to get synonyms", status: "error" });
         }
     },
-    async getTerms({ commit }) {
+    async getTerms({ dispatch, commit }) {
         try {
             const resp = await axios.get(TERMS);
             const data = resp.data;
@@ -82,11 +82,11 @@ const actions = {
             dispatch("getSynonyms");
         }
     },
-    async getSynonymFields({ commit }) {
+    async getSynonymFields({ dispatch, commit }) {
         try {
             const resp = await axios.get(SYNONYMS_FIELDS);
             const data = resp.data;
-            console.log(resp.data.synonymsFields);
+
             if (data?.synonymsFields) {
 
                 commit("SET_FIELDS", [...resp.data.synonymsFields]);
@@ -95,6 +95,21 @@ const actions = {
         } catch (error) {
             console.log(error);
             dispatch("showSnackBar", { message: "Error to get fields", status: "error" });
+        }
+    },
+    async deleteSynonymFieldByTerm({ dispatch }, dataFields) {
+        try {
+            const resp = await axios.post(SYNONYMS_FIELDS_DELETE_TERM, dataFields);
+            const data = resp.data;
+
+            if (data?.success) {
+                dispatch("showSnackBar", { message: data.message, status: "success" });
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch("showSnackBar", { message: "error to delete synonym", status: "error" });
+        } finally {
+            dispatch("getSynonyms");
         }
     },
 };

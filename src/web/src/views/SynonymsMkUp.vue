@@ -32,7 +32,7 @@
           </v-btn>
           &nbsp;&nbsp;
           <v-btn color="primary" x-small>
-            <v-icon small @click="showDetails(item.id)">mdi-pencil</v-icon>
+            <v-icon small @click="editSynonym(item.id)">mdi-pencil</v-icon>
           </v-btn>
         </template>
         <template v-slot:item.synonyms="{ item, index }">
@@ -54,7 +54,7 @@
     </v-card>
     
     <AddTermDialog
-      :title="'New Synonym'"
+      :title="dialogTitle"
       :dialog="showNewTerm"
       :close="closeNewTerm"
       :save="createSynonym"
@@ -74,6 +74,7 @@
             <v-btn
               color="primary"
               @click="showTermCreate"
+              v-if="actionType === 'C'"
             >
               Create a new term
             </v-btn>
@@ -146,7 +147,7 @@
 const axios = require("axios");
 import AddTermDialog from '../components/AddDialog.vue';
 import { mapActions, mapGetters } from "vuex";
-import { SYNONYMS_CREATE, TERMS_CREATE, SYNONYMS_FIELDS_CREATE } from "../urls";
+import { SYNONYMS_CREATE, TERMS_CREATE, SYNONYMS_FIELDS_CREATE, SYNONYMS_UPDATE } from "../urls";
 import ConfirmDialog from "../components/ConfirmDialog.vue";
 
 export default {
@@ -157,6 +158,7 @@ export default {
   data() {
     return {
       currentTermIndex: -1,
+      dialogTitle: "",
       showNewTerm: false,
       showNewSynonym: false,
       selectedTerm: null,
@@ -196,6 +198,7 @@ export default {
       showFieldInput: false,
       newFieldInput: null,
       selectedFields: [],
+      actionType: '',
     }
   },
   methods: {
@@ -204,6 +207,7 @@ export default {
         getTerms: "getTerms",
         deleteSynonym: "deleteSynonym",
         getSynonymFields: "getSynonymFields",
+        deleteSynonymFieldByTerm: "deleteSynonymFieldByTerm",
     }),
     filterFields(fields){
       let filteredElements = fields.filter(item => item.term_id === this.selectedTerm);
@@ -238,9 +242,27 @@ export default {
     showRemoveDialog() {
         this.showRemove = true;
     },
-    showDetails(id) {
-			//his.$router.push({ path: route });
-      console.log(id);
+    editSynonym(id) {
+      this.actionType = 'U';
+      this.dialogTitle = "Edit Synonym";
+      this.idSynonym = id;
+
+      const synonym = this.termsSynonym.find(item => item.id === id);
+
+      this.selectedTerm = synonym.term_id;
+      this.newSynonym = synonym.synonym;
+
+      let fields = synonym.field_id.split(',');
+
+      fields.forEach(value => {
+        const trimmed = value.trim();
+        if (trimmed.length > 0) {
+          this.newTerm.fields.push(trimmed);
+          this.newField = "";
+        }
+      });
+
+      this.showNewTerm = true;
 		},
     getColor(calories) {
       if (calories > 400) return 'red'
@@ -258,6 +280,8 @@ export default {
       this.newSynonym = "";
     },
     openNewTerm() {
+      this.actionType = 'C';
+      this.dialogTitle = "New Synonym";
       this.showNewTerm = true;
       this.newSynonym = "";
       this.newField = "";
@@ -317,108 +341,152 @@ export default {
     },
     createSynonym() {
 
-      if(this.newSynonym == ""){
-        this.showMessageSave = true;
-      }else{
-        this.showMessageSave = false;
-      }
+      if (this.actionType = 'U'){
+        this.updateSynonym();
+      }else if(this.actionType = 'C'){
 
-      if(this.showMessageSave == false){
-
-        var termId = this.selectedTerm;
-
-        if(this.newTermInput !== null){
-
-          const exists = this.termsList.some(item => item.text === this.newTermInput);
-
-          if(!exists){
-            this.showTermDuplicated = false;
-
-            axios
-            .post(TERMS_CREATE, {
-                term: this.newTermInput
-            })
-            .then((resp) => {
-
-              termId = resp.data.Id;
-
-              let dataSynonym = {
-                term_id: resp.data.Id,
-                synonym: this.newSynonym
-              };
-
-              this.saveSynonym(dataSynonym);
-
-              if (this.newTerm.fields.length > 0) {
-
-                this.newTerm.fields.forEach(value => {
-                  let dataFields = {
-                    term_id: termId,
-                    field_id: value
-                  }
-
-                  this.saveField(dataFields);
-                });
-
-              }
-
-            })
-            .catch((err) => console.error(err));
-
-          }else{
-            this.showTermDuplicated = true;
-          }
+        if(this.newSynonym == ""){
+          this.showMessageSave = true;
         }else{
+          this.showMessageSave = false;
+        }
 
-          let dataSynonym = {
-              term_id: this.selectedTerm,
-              synonym: this.newSynonym
-          }
+        if(this.showMessageSave == false){
 
-          this.saveSynonym(dataSynonym);
+          var termId = this.selectedTerm;
 
-          if (this.newTerm.fields.length > 0) {
+          if(this.newTermInput !== null){
 
-            this.newTerm.fields.forEach(value => {
-              let dataFields = {
-                term_id: termId,
-                field_id: value
-              }
+            const exists = this.termsList.some(item => item.text === this.newTermInput);
 
-              this.saveField(dataFields);
-            });
+            if(!exists){
+              this.showTermDuplicated = false;
+
+              axios
+              .post(TERMS_CREATE, {
+                  term: this.newTermInput
+              })
+              .then((resp) => {
+
+                termId = resp.data.Id;
+
+                let dataSynonym = {
+                  term_id: resp.data.Id,
+                  synonym: this.newSynonym
+                };
+
+                this.saveSynonym(dataSynonym);
+
+                if (this.newTerm.fields.length > 0) {
+
+                  this.newTerm.fields.forEach(value => {
+                    let dataFields = {
+                      term_id: termId,
+                      field_id: value
+                    }
+
+                    this.saveField(dataFields);
+                  });
+
+                }
+
+              })
+              .catch((err) => console.error(err));
+
+            }else{
+              this.showTermDuplicated = true;
+            }
+          }else{
+
+            let dataSynonym = {
+                term_id: this.selectedTerm,
+                synonym: this.newSynonym
+            }
+
+            this.saveSynonym(dataSynonym);
+
+            if (this.newTerm.fields.length > 0) {
+
+              this.newTerm.fields.forEach(value => {
+                let dataFields = {
+                  term_id: termId,
+                  field_id: value
+                }
+
+                this.saveField(dataFields);
+              });
+
+            }
 
           }
 
         }
-
       }
 
     },
     saveSynonym(dataSynoyms) {
-
-      console.log(dataSynoyms);
-
       axios
         .post(SYNONYMS_CREATE, dataSynoyms)
         .then((resp) => {
-          console.log("saveSynonym");
           console.log(resp);
         })
         .catch((err) => console.error(err));
     },
     saveField(dataFields) {
-
-      console.log(dataFields);
-
       axios
         .post(SYNONYMS_FIELDS_CREATE, dataFields)
         .then((resp) => {
-          console.log("saveField");
-          console.log(resp);
           this.closeNewTerm();
         })
         .catch((err) => console.error(err));
+    },
+    updateSynonym() {
+
+      const synonym = this.termsSynonym.find(item => item.id === this.idSynonym);
+      const originalFields = synonym.field_id.split(',').map(item => item.trim());
+
+      const deletedFields = this.findDifference(originalFields.map(String), this.newTerm.fields.map(String));
+      const addedFields = this.findDifference(this.newTerm.fields.map(String), originalFields.map(String));
+
+      if (deletedFields.length > 0) {
+        deletedFields.forEach(value => {
+          let dataFields = {
+            term_id: synonym.term_id,
+            field_id: value
+          }
+
+          this.deleteSynonymFieldByTerm(dataFields);
+        });
+
+      }
+
+      if (addedFields.length > 0) {
+        addedFields.forEach(value => {
+          let dataFields = {
+            term_id: synonym.term_id,
+            field_id: value
+          }
+
+          this.saveField(dataFields)
+        });
+
+      }
+
+      let dataSynonym = {
+          term_id: this.selectedTerm,
+          synonym: this.newSynonym
+      }
+
+      axios
+        .patch(`${SYNONYMS_UPDATE}/${this.idSynonym}`, dataSynonym)
+        .then((resp) => {
+          this.closeNewTerm();
+        })
+        .catch((err) => console.error(err));
+
+    },
+    findDifference(arr1, arr2) {
+      return arr1.filter(item => !arr2.includes(item));
     },
     /*createSynonym() {
       if (this.currentTermIndex > -1) {
