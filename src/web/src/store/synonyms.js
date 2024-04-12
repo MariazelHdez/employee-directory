@@ -86,7 +86,7 @@ const actions = {
         try {
             const resp = await axios.get(SYNONYMS_FIELDS);
             const data = resp.data;
-
+            console.log(resp.data.synonymsFields);
             if (data?.synonymsFields) {
 
                 commit("SET_FIELDS", [...resp.data.synonymsFields]);

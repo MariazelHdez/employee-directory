@@ -99,28 +99,29 @@
 						</v-text-field>
           </v-col>
 
-          <v-col cols="12">
-            <v-select
-              :items="fieldTerms"
-              label="Fields"
-              multiple
-              v-model="selectedFields"
-            ></v-select>
-            <v-btn
-              color="primary"
-              @click="showFieldCreate"
-            >
-              Add Field
-            </v-btn>
-          </v-col>
+            <v-col cols="9">
+              <v-text-field
+                label="Field(s)*"
+                v-model="newField"
+              >
+              </v-text-field>
+            </v-col>
 
-          <v-col cols="12" v-if="showFieldInput">
-            <v-text-field
-							label="Field"
-							v-model="newFieldInput"
-						>
-						</v-text-field>
-          </v-col>
+            <v-col cols="3">
+              <v-btn @click="addToFields">
+                Add field
+              </v-btn>
+            </v-col>
+            <v-col cols="12" class="mb-2">
+              <v-chip 
+                close 
+                v-for="item, index of newTerm.fields" 
+                @click:close="deleteChip('field', index)"
+                :key="index"
+              >
+                {{ item }}
+              </v-chip>
+            </v-col>
 
           <v-col cols="12" v-if="showMessageSave">
             <p class="font-weight-bold" color="red">Enter required fields</p>
@@ -315,10 +316,6 @@ export default {
       }
     },
     createSynonym() {
-      /*if (this.newTerm.term.length > 0) {
-        this.termsSynonym.push({ ...this.newTerm });
-        this.closeNewTerm();
-      }*/
 
       if(this.newSynonym == ""){
         this.showMessageSave = true;
@@ -352,13 +349,17 @@ export default {
 
               this.saveSynonym(dataSynonym);
 
-              if(this.newFieldInput !== null){
-                let dataFields = {
-                    term_id: termId,
-                    field_id: this.newFieldInput
-                }
+              if (this.newTerm.fields.length > 0) {
 
-                this.saveField(dataFields);
+                this.newTerm.fields.forEach(value => {
+                  let dataFields = {
+                    term_id: termId,
+                    field_id: value
+                  }
+
+                  this.saveField(dataFields);
+                });
+
               }
 
             })
@@ -376,21 +377,22 @@ export default {
 
           this.saveSynonym(dataSynonym);
 
-          this.selectedFields.forEach(value => {
+          if (this.newTerm.fields.length > 0) {
 
-            let dataFields = {
-              term_id: termId,
-              field_id: value
-            }
+            this.newTerm.fields.forEach(value => {
+              let dataFields = {
+                term_id: termId,
+                field_id: value
+              }
 
-            this.saveField(dataFields);
-          });
+              this.saveField(dataFields);
+            });
+
+          }
 
         }
 
       }
-
-      
 
     },
     saveSynonym(dataSynoyms) {
