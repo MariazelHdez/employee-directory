@@ -97,11 +97,11 @@
           </v-col>
 
           <v-col cols="12" v-if="showMessageSave">
-            <p class="font-weight-bold text-danger" >Term is required</p>
+            <p class="font-weight-bold red--text" ><v-icon class="red--text">mdi-alert</v-icon>Term is required</p>
           </v-col>
 
           <v-col cols="12" v-if="showTermDuplicated">
-            <p class="font-weight-bold text-red" >Term already exists</p>
+            <p class="font-weight-bold red--text" ><v-icon class="red--text">mdi-alert</v-icon>Term already exists</p>
           </v-col>
 
           <v-col cols="9">
@@ -177,7 +177,11 @@
             </v-col>
 
             <v-col cols="12" v-if="showMessageField">
-              <p class="font-weight-bold text-red" >Fields are required for new terms</p>
+              <p class="font-weight-bold red--text" ><v-icon class="red--text">mdi-alert</v-icon>Fields are required for new terms</p>
+            </v-col>
+
+            <v-col cols="12" v-if="showUpdateValidation">
+              <p class="font-weight-bold red--text" ><v-icon class="red--text">mdi-alert</v-icon>Synonyms or fields must not be empty</p>
             </v-col>
         </v-row>
 
@@ -259,6 +263,7 @@ export default {
       selectedFields: [],
       actionType: '',
       checkedTerm: false,
+      showUpdateValidation: false,
     }
   },
   methods: {
@@ -476,7 +481,12 @@ export default {
     createSynonym() {
 
       if (this.actionType == 'U'){
-        this.updateSynonym();
+        if(this.newTerm.fields.length > 0 && this.newTerm.synonyms.length > 0){
+          this.showUpdateValidation = false;
+          this.updateSynonym();
+        }else{
+          this.showUpdateValidation = true;
+        }
       }else if(this.actionType == 'C'){
 
         let validations = this.validateCreation();
