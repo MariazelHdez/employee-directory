@@ -27,9 +27,9 @@
         item-key="term_id"
       >
 
-        <template v-slot:[`item.synonym_array`]="{ item }">
+        <template v-slot:[`item.field_id_array`]="{ item }">
           <v-chip
-            v-for="(field, index) in (item.synonym_array)"
+            v-for="(field, index) in (item.field_id_array)"
             :key="index"
             class="ma-1"
             color="primary"
@@ -38,9 +38,9 @@
           </v-chip>
         </template>
 
-        <template v-slot:[`item.field_id_array`]="{ item }">
+        <template v-slot:[`item.synonym_array`]="{ item }">
           <v-chip
-            v-for="(field, index) in (item.field_id_array)"
+            v-for="(field, index) in (item.synonym_array)"
             :key="index"
             class="ma-1"
             color="primary"
@@ -225,13 +225,13 @@ export default {
       search: '',
       headers: [
         { text: 'Term', value: 'term', filterable: true },
+        { text: 'Fields', value: 'field_id_array', filterable: false, sortable: false },
         {
           text: 'Synonym',
           align: 'start',
           filterable: false,
           value: 'synonym_array',
         },
-        { text: 'Fields', value: 'field_id_array', filterable: false, sortable: false },
         { text: "Actions", align: 'end', value: "term_id", filterable: false, sortable: false },
       ],
       termsSynonym: [],
@@ -334,6 +334,11 @@ export default {
       this.newTermInput = null;
       this.selectedTerm = null;
       this.selectTermDisabled = this.selectTermDisabled ? false : true;
+      this.newTerm = {
+        term: "",
+        fields: [],
+        synonyms: [],
+      };
     },
     DeleteSynonym(id){
       this.idSynonym = id;
@@ -478,8 +483,6 @@ export default {
 
         if(validations){
           this.saveSynonymFields();
-          this.closeNewTerm();
-          this.refreshData();
         }
       }
 
@@ -489,6 +492,8 @@ export default {
         .post(SYNONYMS_CREATE, dataSynoyms)
         .then((resp) => {
           this.$store.dispatch('showSnackBar', { message: "Synonym saved", status: "success" });
+          this.closeNewTerm();
+          this.refreshData();
         })
         .catch((err) => console.error(err));
     },
@@ -731,17 +736,16 @@ export default {
         .catch((err) => console.error(err));
 
     },
-    refreshData(){
-      this.getSynonyms();
-      this.getSynonymsList();
-      this.getTerms();
-      this.getSynonymFields();
+    async refreshData() {
+      await this.getSynonyms();
+      await this.getSynonymsList();
+      await this.getTerms();
+      await this.getSynonymFields();
 
-
-      this.termsSynonym = [ ...this.synonyms ];
-      this.termsList = [ ...this.terms ];
-      this.synonymFields = [ ...this.fields ];
-      this.synonymsList = [ ...this.listSynonyms ];
+      this.termsSynonym = [...this.synonyms];
+      this.termsList = [...this.terms];
+      this.synonymFields = [...this.fields];
+      this.synonymsList = [...this.listSynonyms];
     },
     findDifference(arr1, arr2) {
       return arr1.filter(item => !arr2.includes(item));
