@@ -4,11 +4,11 @@
         v-model="show"
         :color="snackbarColor"
     >
-        {{ snackbarMessage }}
+        <b>{{ snackbarMessage }}</b>
 
         <template v-slot:action="{ attrs }">
         <v-btn
-            color="red"
+            color="white"
             text
             v-bind="attrs"
             @click="clearSnackBar"

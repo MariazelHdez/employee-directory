@@ -13,10 +13,10 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="close">
+          <v-btn color="grey" text @click="close">
             Close
           </v-btn>
-          <v-btn color="blue darken-1" text @click="save">
+          <v-btn color="blue" text @click="save">
             Save
           </v-btn>
         </v-card-actions>
