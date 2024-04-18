@@ -44,6 +44,7 @@ export class EmployeeService {
                     'branch': element.branch,
                     'unit': element.unit,
                     'title': element.title,
+                    'weight': element.weight,
                     'email': element.email.toLowerCase(),
                     'phone_office': element.phone_office,
                     'fax_office': element.fax_office,
