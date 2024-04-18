@@ -169,8 +169,8 @@
 
       },
       acceptDelete() {
-        if (this.currentToRemove?.Id) {
-          this.deleteSortPosition(this.currentToRemove.Id);
+        if (this.currentToRemove?.id) {
+          this.deleteSortPosition(this.currentToRemove.id);
         }
       },
       openNewTerm() {
@@ -180,6 +180,7 @@
       closeNewTerm() {
         this.showNewTerm = false;
         this.newItem.description = "";
+        this.titleList = [];
       },
       saveTerm() {
         const trimmed = this.newItem.description.trim();
@@ -246,17 +247,15 @@
         this.titleList = [ ...this.employeeTitles ];
       },
       search (val) {
-        if(val !== null && val.length > 3){
+        if(val !== null && val.length >= 3){
           this.searchTitle(val);
         }
       },
     },
     async created() {
       await this.getSortPositions();
-      //await this.getEmployeeTitles();
       this.terms = [ ...this.sortPositions ];
       this.backupTerms = [ ...this.sortPositions ];
-      //this.titleList = [ ...this.employeeTitles ];
     },
     mounted() {
     },
