@@ -46,11 +46,8 @@ const actions = {
     },
     async insertSortPosition({ dispatch }, { sortPosition }) {
         try {
-            console.log(sortPosition);
             const resp = await axios.post(SORT_POSITIONS, sortPosition);
             const data = resp.data;
-
-            console.log(resp.data);
 
             if (data?.success) {
                 dispatch("showSnackBar", { message: data.message, status: "success" });
@@ -66,8 +63,6 @@ const actions = {
         try {
             const resp = await axios.delete(`${SORT_POSITIONS}/${sortPositionId}`,);
             const data = resp.data;
-
-            console.log(resp.data);
 
             if (data?.success) {
                 dispatch("showSnackBar", { message: data.message, status: "success" });
@@ -99,7 +94,7 @@ const actions = {
     async postNewSortPositions({ commit, getters, dispatch }) {
         try {
             const models = [ ...getters.newSortPositions ]
-
+            console.log(models);
             const resp = await axios.post(StaffDirectoryUrl+"/ReorderPositions", { Models: models });
             //const resp = await axios.post(SORT_POSITIONS, { Models: models });
             const data = resp?.data;

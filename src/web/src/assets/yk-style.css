@@ -275,3 +275,8 @@ a:visited{
 a:hover{
   color:#008392 !important;
 }
+
+.drag-row{
+  border: #e0e0e0 1px solid;
+  border-radius: 4px;
+}

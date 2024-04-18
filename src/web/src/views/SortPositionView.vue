@@ -27,7 +27,6 @@
           </v-col>
         </v-row>
       </v-card-title>
-
       <div class="col-12" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
         <draggable
           :list="terms"
@@ -41,7 +40,7 @@
             v-for="item in terms"
             :key="item.weight"
           >
-            <v-row no-gutters style="border: #e0e0e0 1px solid; padding: 5px; border-radius: 4px;">
+            <v-row no-gutters class="pa-1 drag-row">
               <v-icon
                 small
                 class="page__grab-icon mr-5"
