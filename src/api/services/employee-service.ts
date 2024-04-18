@@ -22,7 +22,8 @@ export class EmployeeService {
     var employeeArr: any[] = Array();
     await axios.get(String(EMPLOYEEJSON), { params: { department: paramDepartment, keyword: paramFullName } })
         .then(async (response: any) => {
-            var resultEmployees = response.data.employees;
+          var resultEmployees = response.data.employees;
+          let employee_key = 0;
             resultEmployees.forEach(function (element: any) {
                 var division_url = element.division !== null ? element.division.replace(/\s/g, "-") : '';
                 interface EmployeeDetail extends EmployeeTable {
@@ -58,9 +59,10 @@ export class EmployeeService {
                     'latitude': element.latitude,
                     'longitude': element.longitude,
                     'value': 0,
-                    'center': { "lat": 0, "lng": 0 }
+                    'center': { "lat": 0, "lng": 0 },
+                    'id':employee_key,
                 };
-
+                employee_key++;
                 employeeArr.push(employee);
             });
             return employeeArr;

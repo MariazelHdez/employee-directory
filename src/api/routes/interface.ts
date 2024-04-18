@@ -14,4 +14,5 @@ export interface EmployeeTable {
     value: number
     address: string
     community: string
+    id:any
 }

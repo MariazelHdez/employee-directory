@@ -239,7 +239,7 @@ export default {
                         groupBy: this.selection,
                         itemsperPage: this.itemsPerPage,
                     },
-                    url: `${urls.FIND_EMPLOYEE_URL}search/keyword=${full_name}&department=${department}`
+                    url: `${urls.FIND_EMPLOYEE_URL}search/keyword=${this.searchTitle}&department=${department}`
                 }
                 )
                 .then((resp) => {

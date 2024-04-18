@@ -101,7 +101,7 @@ employeesRouter.post("/find-employee/search/keyword=:full_name?&department=:depa
     axios.get(String(EMPLOYEEJSON), { params: { department: paramDepartment, keyword: paramFullName } })
         .then((response: any) => {
             var resultEmployees = response.data.employees;
-
+            let employee_key = 0;
             resultEmployees.forEach(function (element: any) {
                 var division_url = element.division !== null ? element.division.replace(/\s/g, '-') : '';
                 var employee: EmployeeTable = {
@@ -120,8 +120,10 @@ employeesRouter.post("/find-employee/search/keyword=:full_name?&department=:depa
                     'value': 0,
                     'address': element.address,
                     'community': element.community,
+                    'id': employee_key
                 };
 
+                employee_key++;
                 employeesByDept.push(employee);
 
             });
@@ -153,7 +155,7 @@ employeesRouter.post("/find-employee/search/keyword=:full_name?&department=:depa
                     break;
             }
 
-            console.log("🚀 ~ .then ~ finalResult:", finalResult)
+           // console.log("🚀 ~ .then ~ finalResult:", finalResult)
             res.send({ data: finalResult, meta: { count: employeesByDept.length } });
 
         })
@@ -253,7 +255,7 @@ employeesRouter.post("/find-employee/:department/:division/:branch?", [param("de
         .then((response: any) => {
 
             var resultEmployees = response.data.employees;
-
+            let employee_key = 0;
             resultEmployees.forEach(function (element: any) {
                 var division_url = element.division !== null ? element.division.replace(/\s/g, '-') : '';
                 var employee: EmployeeTable = {
@@ -272,9 +274,9 @@ employeesRouter.post("/find-employee/:department/:division/:branch?", [param("de
                     'value': 0,
                     'address': element.address,
                     'community': element.community,
-
+                    'id': employee_key,
                 };
-
+                employee_key++;
                 employeesByDept.push(employee);
             });
             
@@ -342,7 +344,6 @@ employeesRouter.post("/find-employee/:department/:division/:branch?", [param("de
             })
 
             const getEmployeesByManager = (employeesArray: any, currentManager: any, level: any) => {
-                employeesArray = _.orderBy(employeesArray, ['full_name'],['asc']);
                 const currentEmployees = employeesArray.filter(
                     (employee: any) => employee.manager === currentManager.full_name
                 );
@@ -365,18 +366,18 @@ employeesRouter.post("/find-employee/:department/:division/:branch?", [param("de
 
             let result: any = [];
             let levelOfDepth: any = 0;
-            managersByDivision = _.orderBy(managersByDivision, ['full_name'], ['asc']);
+            managersByDivision = _.orderBy(managersByDivision, ['id'], ['asc']);
             for (const manager of managersByDivision) {
                 levelOfDepth = _.isUndefined(manager.level) ? 0 : manager.level;
-                result = [...getEmployeesByManager(employeesByManager, manager, levelOfDepth), ...result];
+                result = [...result, ...getEmployeesByManager(employeesByManager, manager, levelOfDepth)];
             }
 
-            let resultRev = result.slice().reverse();
+            let resultRev = result.slice();
             let resultFilttered = resultRev.filter(function (elem: any, index: any, self: any) {
                 return index == self.indexOf(elem);
             });
 
-            let finalResult = resultFilttered.slice().reverse();
+            let finalResult = resultFilttered.slice();
             finalResult = finalResult.filter(function (elem: any, index: any, self: any) {
                 return index == self.indexOf(elem);
             });
@@ -394,9 +395,6 @@ employeesRouter.post("/find-employee/:department/:division/:branch?", [param("de
                     endResult = _.groupBy(finalResult, function (item: any) { return `${item.title}` });
                     break;
             }
-
-            var sortedResult = _.orderBy(endResult, ['weight'], ['asc']);
-            // console.log("🚀 ~ .then ~ sortedResult:", sortedResult)
 
             res.send({ data: endResult, meta: { branchCount: finalResult.length, divisionCount: divLength } });
         })
