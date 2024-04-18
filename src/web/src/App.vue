@@ -66,7 +66,7 @@ box-shadow: 1px 3px 3px 0px rgba(163,163,163,0.33) !important;
         
       </v-card>
     </v-footer>
-
+  <ShowMessage></ShowMessage>
   </v-app>
 </template>
 
@@ -78,6 +78,7 @@ import * as config from "./config";
 import { mapState, mapGetters } from "vuex";
 import IconLoader from "./components/icons/IconLoader.vue";
 import FeedbackForm from "./components/UI/FeedbackForm.vue";
+import ShowMessage from "./components/ShowMessage.vue";
 
 export default {
     name: "App",
@@ -122,7 +123,7 @@ export default {
           store.dispatch("signOut");
         },
     },
-    components: { IconLoader, FeedbackForm },
+    components: { IconLoader, FeedbackForm, ShowMessage },
     computed: {
       ...mapGetters(["isAuthenticated"]),
       currentRouteName() {

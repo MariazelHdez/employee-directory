@@ -28,48 +28,55 @@
         </v-row>
       </v-card-title>
 
-      <div class="col-12" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+      <v-data-table
+      :headers="headers"
+      :items="terms"
+      item-key="id"
+      :show-select="false"
+      :disable-pagination="true"
+      :hide-default-footer="true"
+      class="page__table"
+    >
+      <template v-slot:body="props">
         <draggable
-          :list="terms"
+          :list="props.items"
+          tag="tbody"
           @start="drag=true" 
           @end="drag=false"
           @change="checkMovement($event)"
         >
-          <div
-            class="list-group-item"
-            v-for="item in terms"
-            :key="item.Weight"
+          <tr
+            v-for="(item, index) in props.items"
+            :key="index"
           >
-            <v-row no-gutters>
-              <v-icon
-                small
-                class="page__grab-icon mr-5"
-              >
-                mdi-arrow-all
-              </v-icon>
-
-              <div class="align-content-center">{{ item.Description }}</div>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="error"
-                x-small
-                @click="showRemoveDialog(item)"
-              >
+            <td>
+              <v-row no-gutters>
                 <v-icon
                   small
+                  class="page__grab-icon mr-5"
                 >
-                  mdi-delete
+                  mdi-arrow-all
                 </v-icon>
-              </v-btn>
-            </v-row>
-          </div>
+
+                <div class="align-content-center">{{ item.Description }}</div>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="error"
+                  x-small
+                  @click="showRemoveDialog(item)"
+                >
+                  <v-icon
+                    small
+                  >
+                    mdi-delete
+                  </v-icon>
+                </v-btn>
+              </v-row>
+            </td>
+          </tr>
         </draggable>
-      </div>
-      <v-row class="justify-center" v-if="stopFetch">
-        <v-btn color="primary" @click="reloadFetch">
-          no more data, click to reload
-        </v-btn>
-      </v-row>
+      </template>
+    </v-data-table>
     </v-card>
 
     <AddTermDialog 
@@ -143,11 +150,7 @@
         reorderPositions: "postNewSortPositions",
         insertSortPosition: "insertSortPosition",
         deleteSortPosition: "deleteSortPosition",
-        reloadFetch: "reloadFetch",
       }),
-      loadMore: function() {
-        this.getSortPositions();
-      },
       showRemoveDialog(item) {
         this.showRemove = true;
         this.currentToRemove = item;
@@ -211,8 +214,6 @@
       ...mapGetters([
         "sortPositions",
         "newSortPositions",
-        "busy",
-        "stopFetch",
       ]),
     },
     watch: {
