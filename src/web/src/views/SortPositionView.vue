@@ -15,7 +15,7 @@
           </v-col>
           <v-col cols="12" md="2" align-self="center">
             <v-btn :disabled="!wasMoved" color="secondary" width="100%" @click="saveChanges">
-              save changes
+              Save changes
             </v-btn>
           </v-col>
           <v-spacer></v-spacer>
@@ -35,20 +35,25 @@
           @end="drag=false"
           @change="checkMovement($event)"
         >
+          <transition-group>
           <div
             class="list-group-item"
             v-for="item in terms"
-            :key="item.Weight"
+            :key="item.weight"
           >
-            <v-row no-gutters>
+            <v-row no-gutters style="border: #e0e0e0 1px solid; padding: 5px; border-radius: 4px;">
               <v-icon
                 small
                 class="page__grab-icon mr-5"
+                style="cursor:pointer"
               >
                 mdi-arrow-all
               </v-icon>
 
-              <div class="align-content-center">{{ item.Description }}</div>
+              <div
+                class="align-content-center"
+                style="cursor:pointer"
+              >{{ item.description }}</div>
               <v-spacer></v-spacer>
               <v-btn
                 color="error"
@@ -63,28 +68,32 @@
               </v-btn>
             </v-row>
           </div>
+          </transition-group>
         </draggable>
       </div>
       <v-row class="justify-center" v-if="stopFetch">
         <v-btn color="primary" @click="reloadFetch">
-          no more data, click to reload
+          Reload List
         </v-btn>
       </v-row>
     </v-card>
 
     <AddTermDialog 
-    :title="'New Term'"
+    :title="'New Title'"
     :dialog="showNewTerm"
     :close="closeNewTerm"
     :save="saveTerm"
     >
       <template v-slot:inputs>
         <v-col cols="12">
-          <v-text-field
-            label="Term*"
-            v-model="newItem.Description"
-          >
-          </v-text-field>
+          <v-autocomplete
+            label="Title*"
+            v-model="newItem.description"
+            clearable
+            :search-input.sync="search"
+            :items="titleList"
+            @click:clear="clearTitle"
+          ></v-autocomplete>
         </v-col>
       </template>
     </AddTermDialog>
@@ -112,15 +121,15 @@
     data() {
       return {
         showRemove: false,
-        paramsRemove: { title: "Confirm delete", message: "do you really want to delete this item permanently? " },
+        paramsRemove: { title: "Confirm delete", message: "Do you really want to delete this item permanently? " },
         currentToRemove: null,
         wasMoved: false,
         showNewTerm: false,
         drag: false,
         newTerm: "",
         newItem: {
-          Description: "",
-          Weight: 0
+          description: "",
+          weight: 0
         },
         headers: [
           {
@@ -133,6 +142,8 @@
         ],
         terms: [],
         backupTerms: [],
+        titleList: [],
+        search: null,
       };
     },
     methods: {
@@ -144,6 +155,7 @@
         insertSortPosition: "insertSortPosition",
         deleteSortPosition: "deleteSortPosition",
         reloadFetch: "reloadFetch",
+        getEmployeeTitles: "getEmployeeTitles"
       }),
       loadMore: function() {
         this.getSortPositions();
@@ -164,17 +176,17 @@
       },
       openNewTerm() {
         this.showNewTerm = true;
-        this.newItem.Description = "";
+        this.newItem.description = "";
       },
       closeNewTerm() {
         this.showNewTerm = false;
-        this.newItem.Description = "";
+        this.newItem.description = "";
       },
       saveTerm() {
-        const trimmed = this.newItem.Description.trim();
-        
+        const trimmed = this.newItem.description.trim();
+
         if (trimmed.length > 0) {
-          this.newItem.Description = trimmed;
+          this.newItem.description = trimmed;
           this.insertSortPosition({sortPosition: { ...this.newItem } });
         }
       },
@@ -186,12 +198,12 @@
       switchItems(oldIndex, newIndex) {
         const items = [...this.terms];
         const oldItem = items[newIndex];
-        const oldWeight = items[oldIndex].Weight;
+        const oldweight = items[oldIndex].weight;
 
         items[newIndex] = this.terms[oldIndex];
-        items[newIndex].Weight = oldItem.Weight;
+        items[newIndex].weight = oldItem.weight;
         items[oldIndex] = oldItem;
-        items[oldIndex].Weight = oldWeight;
+        items[oldIndex].weight = oldweight;
 
         this.terms = [...items];
 
@@ -206,6 +218,13 @@
       saveChanges() {
         this.reorderPositions();
       },
+      searchTitle(term) {
+        this.getEmployeeTitles(term);
+        this.titleList = [ ...this.employeeTitles ];
+      },
+      clearTitle(){
+        this.titleList = [];
+      },
     },
     computed: {
       ...mapGetters([
@@ -213,6 +232,7 @@
         "newSortPositions",
         "busy",
         "stopFetch",
+        "employeeTitles"
       ]),
     },
     watch: {
@@ -224,12 +244,20 @@
         this.closeNewTerm();
         this.showRemove = false;
         this.currentToRemove = null;
-      }
+        this.titleList = [ ...this.employeeTitles ];
+      },
+      search (val) {
+        if(val !== null && val.length > 3){
+          this.searchTitle(val);
+        }
+      },
     },
     async created() {
       await this.getSortPositions();
+      //await this.getEmployeeTitles();
       this.terms = [ ...this.sortPositions ];
       this.backupTerms = [ ...this.sortPositions ];
+      //this.titleList = [ ...this.employeeTitles ];
     },
     mounted() {
     },

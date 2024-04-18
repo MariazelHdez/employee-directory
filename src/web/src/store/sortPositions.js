@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SORT_POSITIONS } from "../urls";
+import { SORT_POSITIONS, EMPLOYEE_TITLES } from "../urls";
 import { StaffDirectoryUrl } from "../config";
 
 const state = {
@@ -8,6 +8,7 @@ const state = {
     page: 1,
     busy: false,
     stopFetch: false,
+    employeeTitles: [],
 };
 const getters = {
     sortPositions: state => state.sortPositions,
@@ -15,6 +16,7 @@ const getters = {
     page: state => state.page,
     busy: state => state.busy,
     stopFetch: state => state.stopFetch,
+    employeeTitles: state => state.employeeTitles,
 };
 const actions = {
     async getSortPositions({ commit, getters }) {
@@ -23,7 +25,6 @@ const actions = {
                 commit("SET_BUSY", true);
                 const resp = await axios.get(SORT_POSITIONS + "?index=" + getters.page);
                 const data = resp.data;
-                console.log(resp.data);
 
                 if (data?.success) {
                     const newData = resp.data.data;
@@ -45,6 +46,7 @@ const actions = {
     },
     async insertSortPosition({ dispatch }, { sortPosition }) {
         try {
+            console.log(sortPosition);
             const resp = await axios.post(SORT_POSITIONS, sortPosition);
             const data = resp.data;
 
@@ -125,6 +127,24 @@ const actions = {
             console.log(error);
         }
     },
+    async getEmployeeTitles({ commit, getters }, searchTerm) {
+        try {
+            const resp = await axios.get(`${EMPLOYEE_TITLES}/${searchTerm}`);//await axios.get(EMPLOYEE_TITLES);
+            const data = resp.data;
+
+            if (data?.titles) {
+                const jobTitles = resp.data.titles
+                                    .map(employee => employee.JobTitle)
+                                    .filter(title => title.length > 1);
+
+                console.log(jobTitles);
+                commit("SET_EMPLOYEE_TITLES", jobTitles);
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch("showSnackBar", { message: "Error to get employee titles", status: "error" });
+        }
+    }
 };
 const mutations = {
     SET_SORT_POSITIONS(state, sortPositions) {
@@ -141,6 +161,9 @@ const mutations = {
     },
     SET_STOP_FETCH(state, stopFetch) {
         state.stopFetch = stopFetch;
+    },
+    SET_EMPLOYEE_TITLES(state, employeeTitles) {
+        state.employeeTitles = employeeTitles;
     },
 };
 
