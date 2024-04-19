@@ -1,5 +1,5 @@
 <template>
-  <div class="books">
+  <div class="employees-grid">
 
     <SearchBarHeader />
 

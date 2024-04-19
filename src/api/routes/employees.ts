@@ -27,18 +27,22 @@ export const ESRI_KEY = process.env.ESRI_KEY;
 export const employeesRouter = express.Router();
 export const DIVISIONSJSON = process.env.DIVISIONSJSON;
 export const EMPLOYEEJSON = process.env.EMPLOYEEJSON;
+export const REMOVE_DEPARTMENTS = process.env.REMOVE_DEPARTMENTS;
+const remove_dept = _.split(REMOVE_DEPARTMENTS, ',').map((item) => _.trim(item));
 
 employeesRouter.post("/", async (req: Request, res: Response) => {
-
+    
     var employeesByDept = Object();
     axios.get(String(DIVISIONSJSON))
         .then((response: any) => {
 
+
             var resultEmployees = response.data.divisions;
             var departments = Array();
-
             resultEmployees.forEach(function (element: any) {
-                departments.push(element.department);
+                if (!remove_dept.includes(element.department)) {
+                    departments.push(element.department);
+                }
             });
 
             var departmentsUq = departments.filter(function (elem, index, self) {
@@ -103,6 +107,8 @@ employeesRouter.post("/find-employee/search/keyword=:full_name?&department=:depa
             var resultEmployees = response.data.employees;
             let employee_key = 0;
             resultEmployees.forEach(function (element: any) {
+                
+                
                 var division_url = element.division !== null ? element.division.replace(/\s/g, '-') : '';
                 var employee: EmployeeTable = {
                     'full_name': element.full_name.replace(".", " "),

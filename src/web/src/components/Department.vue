@@ -1,5 +1,5 @@
 <template>
-  <div class="books">
+  <div class="department">
     <div class="text-center loading" v-show="loading">
       <v-progress-circular :size="50" color="primary" indeterminate></v-progress-circular>
     </div>
@@ -18,10 +18,10 @@
       <v-row class="mt-16"></v-row>
       <v-row>
         <v-col col="6">
-          <v-card elevation="2" class="mx-auto flex-column flex-md-row d-flex justify-center align-center department-card"
-            max-width="1180" min-height="542" outlined>
-            <v-card-actions class=" d-flex flex-column justify-center align-center" height="450"
-              max-width="590">
+          <v-card elevation="2"
+            class="mx-auto flex-column flex-md-row d-flex justify-center align-center department-card" max-width="1180"
+            min-height="542" outlined>
+            <v-card-actions class=" d-flex flex-column justify-center align-center" height="450" max-width="590">
               <!--div class="py-4 d-flex align-center justify-center" style="width: 200px">
                 <IconLoader :image="'icon'" :stroke="'purple-stroke'" >
               </div-->
@@ -33,8 +33,9 @@
             <v-card outlined color="transparent" class="flex-column pa-10">
               <h2 v-if="!employeesNotFound" style="color:#522A44!important; font-size: 30px;">Browse employees by these
                 divisions</h2>
-                <div width="100%" v-else>
-                <h2 style="color:#522A44!important; font-size: 30px; text-align: center!important; width: 100%;">There are
+              <div width="100%" v-else>
+                <h2 style="color:#522A44!important; font-size: 30px; text-align: center!important; width: 100%;">There
+                  are
                   no results.</h2>
               </div>
               <v-card outlined color="transparent" v-for="(item, parent_item, id) in items" :key="item.full_name"
@@ -43,13 +44,13 @@
                   <li>
                     <a @click="activateBranches(parent_item)" :key="id" class="division">{{
                       parent_item
-                    }}</a>
+                      }}</a>
                   </li>
                   <v-expand-transition>
                     <ul v-if="check === parent_item">
                       <li v-for="(item, index, id) in item" :key="id" class="py-2">
                         <a :href="generateUrl('branch', index, parent_item)" class="my-2 px-0 py-3 branch">{{ index
-                        }}</a>
+                          }}</a>
                       </li>
                     </ul>
                   </v-expand-transition>

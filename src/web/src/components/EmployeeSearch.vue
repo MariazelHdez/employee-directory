@@ -1,5 +1,5 @@
 <template>
-    <div class="books">
+    <div class="employees-search">
         <SearchBarHeader />
         <DepartmentHeader v-if="department !== 'Any department'" :title="this.department"
             :image="this.department.toLowerCase().replace(/\//g, '')" />
