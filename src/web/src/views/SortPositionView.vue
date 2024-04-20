@@ -29,10 +29,13 @@
       </v-card-title>
       <div class="col-12" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
         <draggable
-          :list="terms"
-          @start="drag=true" 
-          @end="drag=false"
+          class="list-group"
+          tag="ul"
+          :list="backupTerms"
+          @start="isDragging = true"
+          @end="isDragging = false"
           @change="checkMovement($event)"
+          v-bind="dragOptions"
         >
           <transition-group>
           <div
@@ -52,7 +55,7 @@
               <div
                 class="align-content-center"
                 style="cursor:pointer"
-              >{{ item.description }}</div>
+              ><v-chip color="primary">{{ item.weight }}</v-chip>&nbsp;&nbsp;{{ item.description }}</div>
               <v-spacer></v-spacer>
               <v-btn
                 color="error"
@@ -154,7 +157,8 @@
         insertSortPosition: "insertSortPosition",
         deleteSortPosition: "deleteSortPosition",
         reloadFetch: "reloadFetch",
-        getEmployeeTitles: "getEmployeeTitles"
+        getEmployeeTitles: "getEmployeeTitles",
+        getOriginalSortPositions: "getOriginalSortPositions",
       }),
       loadMore: function() {
         this.getSortPositions();
@@ -206,17 +210,26 @@
         items[oldIndex].weight = oldweight;
 
         this.terms = [...items];
+        this.backupTerms = [...items];
 
         this.addToNewSortPositions({ position: items[newIndex] });
         this.addToNewSortPositions({ position: items[oldIndex] });
       },
       reset() {
-        this.terms = [ ...this.backupTerms ];
+        this.refreshData();
         this.wasMoved = false;
         this.cleanNewSortPositions();
       },
+      async refreshData() {
+        this.terms = [];
+        this.backupTerms = [];
+        await this.getOriginalSortPositions();
+        this.terms = [ ...this.sortPositions ];
+        this.backupTerms = [ ...this.sortPositions ];
+      },
       saveChanges() {
         this.reorderPositions();
+        //this.refreshData();
       },
       searchTitle(term) {
         this.getEmployeeTitles(term);
@@ -234,6 +247,14 @@
         "stopFetch",
         "employeeTitles"
       ]),
+      dragOptions() {
+        return {
+          animation: 200,
+          group: "description",
+          disabled: false,
+          ghostClass: "ghost"
+        };
+      }
     },
     watch: {
       sortPositions: function () {

@@ -19,7 +19,7 @@ const getters = {
     employeeTitles: state => state.employeeTitles,
 };
 const actions = {
-    async getSortPositions({ commit, getters }) {
+    async getSortPositions({ commit, getters}) {
         try {
             if (!getters.stopFetch) {
                 commit("SET_BUSY", true);
@@ -41,6 +41,33 @@ const actions = {
         } catch (error) {
             console.log(error);
             commit("SET_BUSY", false);
+            dispatch("showSnackBar", { message: "Error to get terms", status: "error" });
+        }
+    },
+    async getOriginalSortPositions({ commit, getters}) {
+        try {
+
+            commit("SET_SORT_POSITIONS", []);
+
+            state.sortPositions= [];
+            state.page= 1;
+            state.busy= false;
+            state.stopFetch= false;
+            state.employeeTitles= [];
+
+            const resp = await axios.get(SORT_POSITIONS + "?index=" + getters.page);
+            const data = resp.data;
+
+            if (data?.success) {
+                const newData = resp.data.data;
+                if (newData?.length > 0) {
+                    commit("SET_SORT_POSITIONS", [ ...getters.sortPositions, ...newData ]);
+                    commit("SET_PAGE", getters.page+1);
+                    commit("SET_BUSY", false);
+                }
+            }
+        } catch (error) {
+            console.log(error);
             dispatch("showSnackBar", { message: "Error to get terms", status: "error" });
         }
     },
@@ -94,7 +121,7 @@ const actions = {
     async postNewSortPositions({ commit, getters, dispatch }) {
         try {
             const models = [ ...getters.newSortPositions ]
-            console.log(models);
+
             const resp = await axios.post(StaffDirectoryUrl+"/ReorderPositions", { Models: models });
             //const resp = await axios.post(SORT_POSITIONS, { Models: models });
             const data = resp?.data;
