@@ -544,7 +544,7 @@ employeesRouter.post("/find-employee/:department/:division/:branch?", [param("de
             hierarchy.forEach((item) => {
                 const employee = buildHierarchy(item);
                 if (!result_2.some((e) => e.full_name === item.full_name)) {
-                result_2.push(employee);
+                    result_2.push(employee);
                 }
                 // console.log(`${'  '.repeat(level - 1)}${level}. ${item.full_name}`);
                 printHierarchy(item.subordinates || [], level + 1);
