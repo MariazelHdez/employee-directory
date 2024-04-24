@@ -217,13 +217,23 @@ export default {
 
             this.breadcrumbsList = arr
         },
+        validateEmail(email) {
+            return String(email)
+                .toLowerCase()
+                .match(
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                );
+            },
         getDataFromApi() {
             var find = '-';
 
             var reg = new RegExp(find, 'g');
             let { full_name, department } = this.$route.params;
-
-            this.searchTitle = full_name.replace(/\./g, ' ')
+            if (this.validateEmail(full_name)) {
+                this.searchTitle = full_name
+            } else {
+                this.searchTitle = full_name.replace(/\./g, ' ')
+            }
 
             let departmentFormatted = department.replace(reg, ' ')
 

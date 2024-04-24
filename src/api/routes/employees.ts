@@ -89,7 +89,8 @@ employeesRouter.post("/find-employee/search/keyword=:full_name?&department=:depa
     var reg = new RegExp(find, 'g');
     let paramDepartment = (req.params.department).replace(/\--/g, '-/-')
     
-    let paramFullName = (req.params.full_name).replace(".", " ")
+    let paramFullName = (req.params.full_name);//.replace(".", " ")
+    console.log("🚀 ~ employeesRouter.post ~ paramFullName:", paramFullName)
 
     if (paramFullName === 'any-employee') {
         paramFullName = ''
