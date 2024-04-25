@@ -5,17 +5,30 @@
         <h3>Sort Positions</h3>
       </v-card-title>
       <v-card-title>
+        <div class="text-center loading" v-show="loading">
+            <v-progress-circular :size="50" color="primary" indeterminate></v-progress-circular>
+        </div>
         <v-row no-gutters justify="end" align="center">
           <v-col cols="12" md="2" align-self="center">
-            <v-btn :disabled="!wasMoved" color="secondary" width="100%" @click="reset">
+            <v-btn
+              :disabled="!wasMoved"
+              color="secondary"
+              width="100%"
+              @click="reset"
+            >
               Reset
             </v-btn>
           </v-col>
           <v-col cols="12" md="1" align-self="center">
           </v-col>
           <v-col cols="12" md="2" align-self="center">
-            <v-btn :disabled="!wasMoved" color="secondary" width="100%" @click="saveChanges">
-              Save changes
+            <v-btn
+              :disabled="!wasMoved"
+              color="secondary"
+              width="100%"
+              @click="saveChanges"
+            >
+              Save Changes
             </v-btn>
           </v-col>
           <v-spacer></v-spacer>
@@ -112,7 +125,7 @@
   <script>
   import draggable from "vuedraggable";
   import AddTermDialog from '../components/AddDialog.vue';
-  import { mapActions, mapGetters } from "vuex";
+  import { mapActions, mapGetters, mapMutations } from "vuex";
   import ConfirmDialog from "../components/ConfirmDialog.vue";
   export default {
     components: {
@@ -146,6 +159,7 @@
         backupTerms: [],
         titleList: [],
         search: null,
+        loading: false,
       };
     },
     methods: {
@@ -160,6 +174,9 @@
         getEmployeeTitles: "getEmployeeTitles",
         getOriginalSortPositions: "getOriginalSortPositions",
       }),
+      ...mapMutations([
+        'SET_NEW_SORT_POSITIONS'
+      ]),
       loadMore: function() {
         this.getSortPositions();
       },
@@ -172,9 +189,19 @@
         this.currentToRemove = null;
 
       },
-      acceptDelete() {
+      async acceptDelete() {
         if (this.currentToRemove?.id) {
-          this.deleteSortPosition(this.currentToRemove.id);
+          this.loading = true;
+
+          await this.deleteSortPosition(this.currentToRemove.id);
+
+          if(this.stopFetch == true){
+            window.scrollTo(0, 0);
+            this.refreshData();
+          }
+
+          this.loading = false;
+          this.showRemove = false;
         }
       },
       openNewTerm() {
@@ -186,39 +213,62 @@
         this.newItem.description = "";
         this.titleList = [];
       },
-      saveTerm() {
+      async saveTerm() {
         const trimmed = this.newItem.description.trim();
 
         if (trimmed.length > 0) {
+          this.loading = true;
           this.newItem.description = trimmed;
-          this.insertSortPosition({sortPosition: { ...this.newItem } });
+          await this.insertSortPosition({sortPosition: { ...this.newItem } });
+
+          if(this.stopFetch == true){
+            this.reset();
+          }
+
+          this.loading = false;
+          this.showNewTerm = false;
         }
       },
       checkMovement(e) {
         this.wasMoved = true;
         const { oldIndex, newIndex } = e.moved;
+
         this.switchItems(oldIndex, newIndex);
       },
-      switchItems(oldIndex, newIndex) {
-        const items = [...this.terms];
-        const oldItem = items[newIndex];
-        const oldweight = items[oldIndex].weight;
+      switchItems(fromIndex, toIndex) {
+          const items = [...this.terms];
 
-        items[newIndex] = this.terms[oldIndex];
-        items[newIndex].weight = oldItem.weight;
-        items[oldIndex] = oldItem;
-        items[oldIndex].weight = oldweight;
+          if (fromIndex === toIndex) return;
 
-        this.terms = [...items];
-        this.backupTerms = [...items];
+          const element = items[fromIndex];
+          const targetWeight = items[toIndex].weight;
+          const originalWeight = element.weight;
 
-        this.addToNewSortPositions({ position: items[newIndex] });
-        this.addToNewSortPositions({ position: items[oldIndex] });
+          items.splice(fromIndex, 1);
+
+          if (fromIndex < toIndex) {
+              toIndex -= 1;
+          }
+
+          items.splice(toIndex, 0, element);
+          element.weight = targetWeight;
+          items[toIndex].weight = originalWeight;
+          const sortedWeights = items.map(item => item.weight).sort((a, b) => a - b);
+
+          for (let i = 0; i < items.length; i++) {
+              items[i].weight = sortedWeights[i];
+          }
+
+          this.terms = [...items];
+          this.backupTerms = [...items];
+          this.$store.commit('SET_SORT_POSITIONS', [...items]);
       },
       reset() {
+        this.loading = true;
         this.refreshData();
         this.wasMoved = false;
         this.cleanNewSortPositions();
+        this.loading = false;
       },
       async refreshData() {
         this.terms = [];
@@ -228,8 +278,10 @@
         this.backupTerms = [ ...this.sortPositions ];
       },
       saveChanges() {
+        this.loading = true;
         this.reorderPositions();
-        //this.refreshData();
+        this.wasMoved = false;
+        this.loading = false;
       },
       searchTitle(term) {
         this.getEmployeeTitles(term);
@@ -245,7 +297,7 @@
         "newSortPositions",
         "busy",
         "stopFetch",
-        "employeeTitles"
+        "employeeTitles",
       ]),
       dragOptions() {
         return {
@@ -260,7 +312,6 @@
       sortPositions: function () {
         this.terms = [ ...this.sortPositions ];
         this.backupTerms = [ ...this.sortPositions ];
-        this.wasMoved = false;
         this.cleanNewSortPositions();
         this.closeNewTerm();
         this.showRemove = false;

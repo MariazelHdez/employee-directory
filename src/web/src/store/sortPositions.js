@@ -50,6 +50,7 @@ const actions = {
             commit("SET_SORT_POSITIONS", []);
 
             state.sortPositions= [];
+            state.newSortPositions = [];
             state.page= 1;
             state.busy= false;
             state.stopFetch= false;
@@ -97,14 +98,12 @@ const actions = {
         } catch (error) {
             console.log(error);
             dispatch("showSnackBar", { message: "error to delete", status: "error" });
-        } finally {
-            dispatch("getSortPositions");
         }
     },
     addToNewSortPositions({ commit, getters }, { position }) {
         try {
             const positionList = [...getters.newSortPositions];
-            const positionExists = positionList.findIndex(p => p.Id === position.Id);
+            const positionExists = positionList.findIndex(p => p.id === position.id);
             
             if (positionExists !== -1) {
                 positionList[positionExists] = position;
@@ -120,10 +119,8 @@ const actions = {
     },
     async postNewSortPositions({ commit, getters, dispatch }) {
         try {
-            const models = [ ...getters.newSortPositions ]
-
+            const models = [ ...getters.sortPositions ]
             const resp = await axios.post(StaffDirectoryUrl+"/ReorderPositions", { Models: models });
-            //const resp = await axios.post(SORT_POSITIONS, { Models: models });
             const data = resp?.data;
             if (data?.success) {
                 dispatch("showSnackBar", { message: data.message, status: "success" });
@@ -151,7 +148,7 @@ const actions = {
     },
     async getEmployeeTitles({ commit, getters }, searchTerm) {
         try {
-            const resp = await axios.get(`${EMPLOYEE_TITLES}/${searchTerm}`);//await axios.get(EMPLOYEE_TITLES);
+            const resp = await axios.get(`${EMPLOYEE_TITLES}/${searchTerm}`);
             const data = resp.data;
 
             if (data?.titles) {
@@ -159,7 +156,6 @@ const actions = {
                                     .map(employee => employee.JobTitle)
                                     .filter(title => title.length > 1);
 
-                console.log(jobTitles);
                 commit("SET_EMPLOYEE_TITLES", jobTitles);
             }
         } catch (error) {

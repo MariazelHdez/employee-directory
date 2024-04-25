@@ -20,7 +20,7 @@ const routes = [
     redirect: {name: "Find a government employee"}
   },
   {
-    path: "/muck-up/login",
+    path: "/settings/login",
     name: "Login",
     component: LoginView,
     meta: {
@@ -29,7 +29,7 @@ const routes = [
     },
   },
   {
-    path: "/muck-up/synonyms",
+    path: "/settings/synonyms",
     name: "Synonyms",
     component: SynonymsMkUp,
     meta: {
@@ -37,7 +37,7 @@ const routes = [
     },
   },
   {
-    path: "/muck-up/exceptions",
+    path: "/settings/exceptions",
     name: "Exceptions",
     component: ExceptionsView,
     meta: {
@@ -45,7 +45,7 @@ const routes = [
     },
   },
   {
-    path: "/muck-up/sorting",
+    path: "/settings/sorting",
     name: "Sorting",
     component: SortPositionView,
     meta: {
@@ -159,10 +159,10 @@ router.beforeEach(async (to, from, next) => {
   // if (requiresAuth) {
     console.log("You aren't authenticated, redirecting to sign-in");
     
-    return next('/muck-up/login'); 
+    return next('/settings/login'); 
   }
   if (isLogin && isAuthenticated) {
-    return next('/muck-up/synonyms'); 
+    return next('/settings/synonyms'); 
   }
 
   

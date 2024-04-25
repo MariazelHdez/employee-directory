@@ -140,7 +140,7 @@
             </v-chip>
           </v-col>
 
-            <v-col cols="9">
+            <!--v-col cols="9">
               <v-text-field
                 label="Field(s)*"
                 v-model="newField"
@@ -174,6 +174,18 @@
               >
                 {{ item }}
               </v-chip>
+            </v-col-->
+
+            <v-col cols="12" class="mb-2">
+              <v-select
+                v-model="selectedField"
+                :items="newTerm.fields"
+                label="Select Field"
+                multiple
+                chips
+                hint="Fields by term"
+                persistent-hint
+              ></v-select>
             </v-col>
 
             <v-col cols="12" v-if="showMessageField">
@@ -264,6 +276,7 @@ export default {
       actionType: '',
       checkedTerm: false,
       showUpdateValidation: false,
+      selectedField: null,
     }
   },
   methods: {
@@ -288,7 +301,7 @@ export default {
 
         filteredElements = fields.filter(item => item.term_id === this.selectedTerm);
         var clean = filteredElements.map(({ term_id, term, ...rest }) => rest);
-        fieldIds = clean.map(item => item.field_id);
+        fieldIds = clean.map(item => ({text: item.field_id, value: item.id}));
 
       } else if(type == 'S'){
 
@@ -312,13 +325,10 @@ export default {
 
       this.fieldTerms = this.filterFields(this.synonymFields, 'F');
 
-      this.fieldTerms.forEach(value => {
-        const trimmed = value.trim();
-        if (trimmed.length > 0) {
-          this.newTerm.fields.push({ value: trimmed, disabled: true });
-          this.newField = "";
-        }
-      });
+      if (this.fieldTerms.length > 0) {
+        this.newTerm.fields.push(...this.fieldTerms);
+        this.newField = "";
+      }
 
       this.fieldSynonyms = this.filterFields(this.synonymsList, 'S');
 

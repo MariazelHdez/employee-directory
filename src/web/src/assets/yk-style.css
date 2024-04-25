@@ -280,3 +280,8 @@ a:hover{
   border: #e0e0e0 1px solid;
   border-radius: 4px;
 }
+
+.bar-title{
+  padding-left: 15%;
+  margin: 15px;
+}

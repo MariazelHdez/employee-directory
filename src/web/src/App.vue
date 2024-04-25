@@ -1,29 +1,24 @@
 <template>
   <v-app>
-    <v-app-bar style="
-
-box-shadow: 1px 3px 3px 0px rgba(163,163,163,0.33) !important;
--webkit-box-shadow: 1px 3px 3px 0px rgba(163,163,163,0.33) !important;
--moz-box-shadow: 1px 3px 3px 0px rgba(163,163,163,0.33) !important;
-    
-    " color="#fff" flat height="77" max-height="77" class="shadow">
-    <v-container class="px-0">
-      <div class="header-container">
-        <v-row align-content="space-between" align="center">
-          <a href="https://yukon.ca/"><img src="/yukon.svg" style="margin-top:10px;" height="63" /></a>
-          <v-toolbar-title>
-            <v-progress-circular :class="loadingClass" indeterminate color="#f3b228" size="20" width="2"
-              class="ml-4"></v-progress-circular>
-          </v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-btn v-if="isAuthenticated" @click="logout">
-            Logout
+    <v-app-bar flat height="77" max-height="77" class="shadow" color="white" elevation="2">
+      <!-- Image as the title -->
+      <v-toolbar-title class="bar-title">
+        <a href="https://yukon.ca/"><img src="/yukon.svg" style="margin-top:10px;" height="63" /></a>
+      </v-toolbar-title>
+      <v-row class="ml-5">
+        <v-col cols="12">
+          <v-btn text href="synonyms">
+            Synoyms
           </v-btn>
-          <div>
-          </div>
-        </v-row>
-      </div>
-      </v-container>
+          <v-btn text href="sorting">
+            Sorting
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-spacer></v-spacer>
+      <v-btn v-if="isAuthenticated" @click="logout" class="mr-10">
+        <v-icon>mdi-logout</v-icon>&nbsp;Logout
+      </v-btn>
     </v-app-bar>
 
     <v-main :class="{ 'no-bg-img': noBgImg === false }">
