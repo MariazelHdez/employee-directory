@@ -7,7 +7,8 @@ import { SYNONYMS,
         SYNONYMS_FIELDS_DELETE_TERM,
         SYNONYMS_DELETE_TERM,
         SYNONYMS_FIELDS_DELETE_VALUES,
-        SYNONYMS_DELETE_VALUES } from "../urls";
+        SYNONYMS_DELETE_VALUES,
+        SYNONYMS_FIELDS_DELETE_BATCH } from "../urls";
 import { StaffDirectoryUrl } from "../config";
 
 const state = {
@@ -35,21 +36,22 @@ const actions = {
                 resp.data.synonyms.forEach(item => {
                     const key = item.id;
                     if (grouped[key]) {
-
-                        if (!grouped[key].field_id.includes(item.field_id)) {
-                            grouped[key].field_id += `, ${item.field_id}`;
+                        if (!grouped[key].field_id_array.includes(item.field_id)) {
+                            grouped[key].field_id_array.push(item.field_id);
                         }
-
+                        if (!grouped[key].synonyms_fields_id_array.includes(item.synonyms_fields_id)) {
+                            grouped[key].synonyms_fields_id_array.push(item.synonyms_fields_id);
+                        }
                     } else {
-                        grouped[key] = { ...item };
+                        grouped[key] = { ...item, field_id_array: [item.field_id], synonyms_fields_id_array: [item.synonyms_fields_id] };
                     }
                 });
 
                 const groupedSynonyms = Object.values(grouped);
 
-                const mergedFields = Object.values(groupedSynonyms.reduce((acc, { field_id, id, synonym, term, term_id }) => {
+                const mergedFields = Object.values(groupedSynonyms.reduce((acc, { field_id_array, synonyms_fields_id_array, id, synonym, term, term_id }) => {
                     if (!acc[term_id]) {
-                        acc[term_id] = { field_id, id: [], synonym: "", term, term_id };
+                        acc[term_id] = { field_id_array, synonyms_fields_id_array, id: [], synonym: "", term, term_id };
                     }
                     acc[term_id].id.push(id);
                     acc[term_id].synonym += (acc[term_id].synonym ? ", " : "") + synonym;
@@ -59,7 +61,8 @@ const actions = {
                 const synonymsArray = mergedFields.map(item => ({
                     ...item,
                     synonym_array: item.synonym.split(', '),
-                    field_id_array: item.field_id.split(', ')
+                    field_id_array: item.field_id_array.join(', ').split(', '),
+                    synonyms_fields_id_array: item.synonyms_fields_id_array
                 }));
 
                 commit("SET_SYNONYMS", synonymsArray);
@@ -179,6 +182,22 @@ const actions = {
     async deleteSynonymByValues({ dispatch }, dataFields) {
         try {
             const resp = await axios.post(SYNONYMS_DELETE_VALUES, dataFields);
+            const data = resp.data;
+
+            if (data?.success) {
+                dispatch("showSnackBar", { message: data.message, status: "success" });
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch("showSnackBar", { message: "error to delete synonym", status: "error" });
+        } finally {
+            dispatch("getSynonyms");
+
+        }
+    },
+    async deleteFieldsBatch({ dispatch }, fieldIds) {
+        try {
+            const resp = await axios.post(SYNONYMS_FIELDS_DELETE_BATCH, fieldIds);
             const data = resp.data;
 
             if (data?.success) {

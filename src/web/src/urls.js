@@ -30,6 +30,7 @@ export const SYNONYMS_FIELDS = `${config.StaffDirectoryUrl}/SynonymsFields`;
 export const SYNONYMS_FIELDS_CREATE = `${config.StaffDirectoryUrl}/CreateSynonymsFields`;
 export const SYNONYMS_FIELDS_DELETE_TERM = `${config.StaffDirectoryUrl}/DeleteSynonymsFieldsByTerm`;
 export const SYNONYMS_FIELDS_DELETE_VALUES = `${config.StaffDirectoryUrl}/DeleteSynonymsFieldsByValues`;
+export const SYNONYMS_FIELDS_DELETE_BATCH = `${config.StaffDirectoryUrl}/DeleteSynonymsFields`;
 
 //EMPLOYEES
 export const EMPLOYEE_TITLES = `${config.StaffDirectoryUrl}/EmployeeTitles`;

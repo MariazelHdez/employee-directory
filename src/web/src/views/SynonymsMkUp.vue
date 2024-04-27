@@ -140,61 +140,65 @@
             </v-chip>
           </v-col>
 
-            <!--v-col cols="9">
-              <v-text-field
-                label="Field(s)*"
-                v-model="newField"
-              >
-              </v-text-field>
-            </v-col>
+          <v-col cols="12" class="mb-2">
+            <v-select
+              v-model="selectedFields"
+              :items="newTerm.fieldsSelect"
+              :disabled="selectFieldDisabled"
+              label="Select Field"
+              multiple
+              chips
+              hint="Select the corresponding fields"
+              persistent-hint
+            ></v-select>
+          </v-col>
 
-            <v-col cols="3">
-              <v-btn @click="addToFields" color="primary">
-                Add field
-              </v-btn>
-            </v-col>
-            <v-col cols="12" class="mb-2" v-if="actionType === 'C'">
-              <v-chip
-                close
-                v-for="item, index of newTerm.fields"
-                @click:close="deleteChip('field', index)"
-                :key="index"
-                :disabled="item.disabled"
-              >
-                {{ item.value }}
-              </v-chip>
-            </v-col>
+          <v-col cols="12" v-if="showMessageFieldsSelect">
+            <p class="font-weight-bold red--text" ><v-icon class="red--text">mdi-alert</v-icon>Select synonym fields</p>
+          </v-col>
 
-            <v-col cols="12" class="mb-2" v-else>
-              <v-chip
-                close
-                v-for="item, index of newTerm.fields"
-                @click:close="deleteChip('field', index)"
-                :key="index"
-              >
-                {{ item }}
-              </v-chip>
-            </v-col-->
+          <v-col cols="12" class="mb-2">
+            <v-checkbox
+              label="Add new fields"
+              color="primary"
+              @click="showFieldCreate"
+              v-if="actionType === 'C'"
+              v-model="checkedField"
+            ></v-checkbox>
+          </v-col>
 
-            <v-col cols="12" class="mb-2">
-              <v-select
-                v-model="selectedField"
-                :items="newTerm.fields"
-                label="Select Field"
-                multiple
-                chips
-                hint="Fields by term"
-                persistent-hint
-              ></v-select>
-            </v-col>
+          <v-col cols="9" v-if="showFieldInput">
+            <v-text-field
+              label="Field(s)*"
+              v-model="newField"
+            >
+            </v-text-field>
+          </v-col>
 
-            <v-col cols="12" v-if="showMessageField">
-              <p class="font-weight-bold red--text" ><v-icon class="red--text">mdi-alert</v-icon>Fields are required for new terms</p>
-            </v-col>
+          <v-col cols="3" v-if="showFieldInput">
+            <v-btn @click="addToFields" color="primary">
+              Add field
+            </v-btn>
+          </v-col>
 
-            <v-col cols="12" v-if="showUpdateValidation">
-              <p class="font-weight-bold red--text" ><v-icon class="red--text">mdi-alert</v-icon>Synonyms or fields must not be empty</p>
-            </v-col>
+          <v-col cols="12" class="mb-2" v-if="showFieldInput">
+            <v-chip
+              close
+              v-for="item, index of newTerm.fields"
+              @click:close="deleteChip('field', index)"
+              :key="index"
+            >
+              {{ item }}
+            </v-chip>
+          </v-col>
+
+          <v-col cols="12" v-if="showMessageField">
+            <p class="font-weight-bold red--text" ><v-icon class="red--text">mdi-alert</v-icon>Fields are required for new terms</p>
+          </v-col>
+
+          <v-col cols="12" v-if="showUpdateValidation">
+            <p class="font-weight-bold red--text" ><v-icon class="red--text">mdi-alert</v-icon>Synonyms or fields must not be empty</p>
+          </v-col>
         </v-row>
 
       </template>
@@ -237,6 +241,7 @@ export default {
         term: "",
         fields: [],
         synonyms: [],
+        fieldsSelect: [],
       },
       search: '',
       headers: [
@@ -265,9 +270,11 @@ export default {
       showMessageSave: false,
       showMessageSynonym: false,
       showMessageField: false,
+      showMessageFieldsSelect: false,
       newTermInput: null,
       showTermInput: false,
       selectTermDisabled: false,
+      selectFieldDisabled: false,
       loadingTable: false,
       showTermDuplicated: false,
       showFieldInput: false,
@@ -275,6 +282,7 @@ export default {
       selectedFields: [],
       actionType: '',
       checkedTerm: false,
+      checkedField: false,
       showUpdateValidation: false,
       selectedField: null,
     }
@@ -291,6 +299,8 @@ export default {
         deleteSynonymByTerm: "deleteSynonymByTerm",
         deleteSynonymFieldByValues: "deleteSynonymFieldByValues",
         deleteSynonymByValues: "deleteSynonymByValues",
+        deleteFieldsBatch: "deleteFieldsBatch",
+        refreshSynonyms:"refreshSynonyms",
     }),
     filterFields(fields, type){
       let filteredElements = [];
@@ -321,12 +331,13 @@ export default {
         term: "",
         fields: [],
         synonyms: [],
+        fieldsSelect: [],
       };
 
       this.fieldTerms = this.filterFields(this.synonymFields, 'F');
 
       if (this.fieldTerms.length > 0) {
-        this.newTerm.fields.push(...this.fieldTerms);
+        this.newTerm.fieldsSelect.push(...this.fieldTerms);
         this.newField = "";
       }
 
@@ -343,17 +354,22 @@ export default {
     },
     showFieldCreate(){
       this.showFieldInput = this.showFieldInput ? false : true;
+      this.newTerm.fields = [];
     },
     showTermCreate(){
       this.showTermInput = this.showTermInput ? false : true;
       this.newTermInput = null;
       this.selectedTerm = null;
       this.selectTermDisabled = this.selectTermDisabled ? false : true;
+      this.selectFieldDisabled = this.selectFieldDisabled ? false : true;
       this.newTerm = {
         term: "",
         fields: [],
         synonyms: [],
+        fieldsSelect: [],
       };
+      this.checkedField = this.checkedField ? false : true;
+      this.showFieldInput = this.showFieldInput ? false : true;
     },
     DeleteSynonym(id){
       this.idSynonym = id;
@@ -367,20 +383,20 @@ export default {
       this.dialogTitle = "Edit Synonym terms";
       this.idSynonym = id;
       this.selectTermDisabled = true;
+      this.selectFieldDisabled = false;
 
       const synonym = this.termsSynonym.find(item => item.term_id === id);
 
+      let filteredElements = this.synonymFields.filter(item => item.term_id === id);
+      let clean = filteredElements.map(({ term_id, term, ...rest }) => rest);
+      let fieldIds = clean.map(item => ({text: item.field_id, value: item.id}));
+
+      if (fieldIds.length > 0) {
+        this.newTerm.fieldsSelect.push(...fieldIds);
+        this.newField = "";
+      }
+
       this.selectedTerm = synonym.term_id;
-
-      let fields = synonym.field_id.split(',');
-
-      fields.forEach(value => {
-        const trimmed = value.trim();
-        if (trimmed.length > 0) {
-          this.newTerm.fields.push(trimmed);
-          this.newField = "";
-        }
-      });
 
       let synonyms = synonym.synonym.split(',');
 
@@ -419,6 +435,7 @@ export default {
         term: "",
         fields: [],
         synonyms: [],
+        fieldsSelect: [],
       };
     },
     closeNewTerm() {
@@ -431,8 +448,10 @@ export default {
         term: "",
         fields: [],
         synonyms: [],
+        fieldsSelect: [],
       };
-
+      this.checkedField = false;
+      this.showFieldInput = false;
       this.newTermInput = null;
       this.newSynonym = null;
       this.checkedTerm = false;
@@ -440,10 +459,12 @@ export default {
       this.newTermInput = null;
       this.selectedTerm = null;
       this.selectTermDisabled = false;
-
+      this.selectFieldDisabled = false;
+      this.selectedFields = [];
       this.showMessageSave = false;
       this.showMessageField = false;
       this.showMessageSynonym = false;
+      this.showMessageFieldsSelect = false;
 
       this.loadingTable = false;
     },
@@ -451,11 +472,7 @@ export default {
       const trimmed = this.newField.trim();
       if (trimmed.length > 0) {
 
-        if(this.actionType == 'C'){
-          this.newTerm.fields.push({ value: trimmed, disabled: false });
-        }else{
-          this.newTerm.fields.push(trimmed);
-        }
+        this.newTerm.fields.push(trimmed);
 
         this.newField = "";
       }
@@ -474,13 +491,6 @@ export default {
       }
 
     },
-    transformString(string) {
-      const trimmed = string.trim();
-
-      if(trimmed.length > 0) {
-        
-      }
-    },
     deleteChip(type, ChipIndex) {
       if (type === "synonym" && ChipIndex >= 0) {
         this.newTerm.synonyms = this.newTerm.synonyms.filter((_, index) => ChipIndex !== index);
@@ -488,7 +498,7 @@ export default {
         this.newTerm.fields = this.newTerm.fields.filter((_, index) => ChipIndex !== index);
       }
     },
-    createSynonym() {
+    async createSynonym() {
 
       if (this.actionType == 'U'){
         if(this.newTerm.fields.length > 0 && this.newTerm.synonyms.length > 0){
@@ -499,10 +509,11 @@ export default {
         }
       }else if(this.actionType == 'C'){
 
-        let validations = this.validateCreation();
+        let validations = await this.validateCreation();
 
         if(validations){
-          this.saveSynonymFields();
+          await this.saveSynonymFields();
+          this.closeNewTerm();
         }
       }
 
@@ -512,8 +523,7 @@ export default {
         .post(SYNONYMS_CREATE, dataSynoyms)
         .then((resp) => {
           this.$store.dispatch('showSnackBar', { message: "Synonym saved", status: "success" });
-          this.closeNewTerm();
-          this.refreshData();
+          this.$store.dispatch('getSynonyms');
         })
         .catch((err) => console.error(err));
     },
@@ -522,6 +532,7 @@ export default {
         .post(SYNONYMS_FIELDS_CREATE, dataFields)
         .then((resp) => {
           console.log(resp);
+          this.$store.dispatch('getSynonyms');
         })
         .catch((err) => console.error(err));
     },
@@ -530,6 +541,7 @@ export default {
         .post(SYNONYMS_CREATE, dataSynoyms)
         .then((resp) => {
           this.$store.dispatch('showSnackBar', { message: "Synonym saved", status: "success" });
+          this.$store.dispatch('getSynonyms');
         })
         .catch((err) => console.error(err));
     },
@@ -554,6 +566,13 @@ export default {
         }else{
           this.showMessageSave = false;
         }
+
+        if(this.selectedFields.length == 0){
+          this.showMessageFieldsSelect = true;
+        }else{
+          this.showMessageFieldsSelect = false;
+        }
+
       }
 
       if(this.newTerm.synonyms.length == 0){
@@ -562,16 +581,16 @@ export default {
         this.showMessageSynonym = false;
       }
 
-      if(this.showMessageSave == false && this.showMessageField == false && this.showMessageSynonym == false){
+      /*if(this.showMessageSave == false && this.showMessageField == false && this.showMessageSynonym == false && this.showMessageFieldsSelect == false){
         return true;
       }else{
         return false;
-      }
+      }*/
+
+      return !this.showMessageSave && !this.showMessageField && !this.showMessageSynonym && !this.showMessageFieldsSelect;
 
     },
     saveSynonymFields() {
-
-        //if(this.showMessageSave == false && this.showMessageField == false && this.showMessageSynonym == false){
 
           var termId = this.selectedTerm;
 
@@ -637,17 +656,20 @@ export default {
             }
           }else{
 
+            if (this.selectedFields.length > 0) {
+              this.updateFields(this.selectedFields);
+            }
+
             if (this.newTerm.fields.length > 0) {
 
               this.newTerm.fields.forEach(value => {
-                if(value.disabled == false){
+
                   let dataFields = {
                     term_id: termId,
-                    field_id: value.value
+                    field_id: value
                   }
 
                   this.saveField(dataFields);
-                }
               });
 
             }
@@ -676,7 +698,17 @@ export default {
 
           }
 
-        //}
+        this.refreshData();
+    },
+    updateFields(selectedFields) {
+      const deletedFields = this.newTerm.fieldsSelect
+        .filter(item => !selectedFields.includes(item.value))
+        .map(item => item.value);
+
+      if (deletedFields.length > 0) {
+        this.deleteFieldsBatch(deletedFields);
+      }
+
     },
     updateSynonym() {
 
@@ -757,15 +789,25 @@ export default {
 
     },
     async refreshData() {
-      await this.getSynonyms();
-      await this.getSynonymsList();
-      await this.getTerms();
-      await this.getSynonymFields();
+      this.termsSynonym = [];
+      this.termsList = [];
+      this.synonymFields = [];
+      this.synonymsList = [];
 
-      this.termsSynonym = [...this.synonyms];
-      this.termsList = [...this.terms];
-      this.synonymFields = [...this.fields];
-      this.synonymsList = [...this.listSynonyms];
+      this.$store.commit('SET_SYNONYMS', []);
+      this.$store.commit('SET_TERMS', []);
+      this.$store.commit('SET_FIELDS', []);
+      this.$store.commit('SET_SYNONYMS_LIST', []);
+
+      await this.$store.dispatch('getSynonyms');
+      await this.$store.dispatch('getSynonymsList');
+      await this.$store.dispatch('getTerms');
+      await this.$store.dispatch('getSynonymFields');
+
+      this.termsSynonym = [...this.$store.getters.synonyms];
+      this.termsList = [...this.$store.getters.terms];
+      this.synonymFields = [...this.$store.getters.fields];
+      this.synonymsList = [...this.$store.getters.listSynonyms];
     },
     findDifference(arr1, arr2) {
       return arr1.filter(item => !arr2.includes(item));
@@ -817,6 +859,7 @@ export default {
   },
   async created() {
     this.loadingTable = true;
+
     await this.getSynonyms();
     await this.getSynonymsList();
     await this.getTerms();

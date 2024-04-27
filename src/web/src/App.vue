@@ -8,7 +8,7 @@
       <v-row class="ml-5">
         <v-col cols="12">
           <v-btn text href="synonyms">
-            Synoyms
+            Synonyms
           </v-btn>
           <v-btn text href="sorting">
             Sorting
