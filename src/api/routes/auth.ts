@@ -66,7 +66,7 @@ export function configureAuthentication(app: Express) {
     app.get("/", async (req: Request, res: Response) => {
 
         if (req.oidc.isAuthenticated()) {
-            res.redirect(FRONTEND_URL+"/muck-up/synonyms");
+            res.redirect(FRONTEND_URL+"/settings/synonyms");
         } else {
             // this is hard-coded to accomodate strage behaving in sendFile not allowing `../` in the path.
             // this won't hit in development because web access is served by the Vue CLI - only an issue in Docker

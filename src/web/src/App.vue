@@ -13,6 +13,9 @@
           <v-btn text href="sorting">
             Sorting
           </v-btn>
+          <v-btn text href="exceptions">
+            Exceptions
+          </v-btn>
         </v-col>
       </v-row>
       <v-spacer></v-spacer>
