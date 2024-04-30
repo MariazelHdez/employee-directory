@@ -168,6 +168,7 @@ export default {
     }
   },
   mounted() {
+    this.toggleLocale();
     this.$nextTick(() => {
       window.addEventListener('resize', this.onResize);
     })
@@ -178,6 +179,16 @@ export default {
     this.updateBreadCrumbs();
   },
   methods: {
+    toggleLocale: function () {
+        const savedLocale = this.$cookies.get("locale");
+        const routeLocale = this.$route.params.locale;
+
+        if (savedLocale != routeLocale) {
+            this.$cookies.set("locale", routeLocale);
+            this.loadLocale(routeLocale);
+            this.$i18n.locale = routeLocale;
+        }
+    },
     cleanParam(param) {
 
       if (param === '-') {

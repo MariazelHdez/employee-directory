@@ -113,17 +113,17 @@ export default {
 
             let name = this.nameSearch.replace(/\s+/g, '.').trim()
             let department = this.departmentSearch.replace(reg, '-').replace(/\//g, '').toLowerCase()
-
+            const currentLocale = this.$cookies.get("locale");
 
             if (name === '' && department === '') {
-                window.location.href = '/find-employee/search/keyword=any-employee&department=any-department'
+                window.location.href = '/' + currentLocale +'/find-employee/search/keyword=any-employee&department=any-department'
             } else {
                 if (department === '') {
-                    window.location.href = '/find-employee/search/keyword=' + name + '&department=any-department'
+                    window.location.href = '/' + currentLocale +'/find-employee/search/keyword=' + name + '&department=any-department'
                 } else if (name === '') {
-                    window.location.href = '/find-employee/' + department
+                    window.location.href = '/' + currentLocale +'/find-employee/' + department
                 } else {
-                    window.location.href = '/find-employee/search/keyword=' + name + '&department=' + department
+                    window.location.href = '/' + currentLocale +'/find-employee/search/keyword=' + name + '&department=' + department
                 }
             }
         },

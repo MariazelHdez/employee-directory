@@ -17,7 +17,7 @@ const routes = [
     redirect: {name: "Find a government employee"}
   },
   {
-    path: "/find-Employee/employee-detail/:department/:full_name",
+    path: "/:locale/find-Employee/employee-detail/:department/:full_name",
     name: "Employee Detail",
     component: EmployeeDetail,
     meta: {
@@ -32,7 +32,7 @@ const routes = [
     }
   },
   {
-    path: "/find-employee/search/keyword=:full_name&department=:department?",
+    path: "/:locale/find-employee/search/keyword=:full_name&department=:department?",
     name: "Search Employee",
     component: EmployeeSearch,
     meta: {
@@ -45,7 +45,7 @@ const routes = [
     }
   },
   {
-    path: "/find-employee/:department/:division/:branch?", 
+    path: "/:locale/find-employee/:department/:division/:branch?", 
     name: "Data grid",
     component: Grid,
     meta: {
@@ -59,7 +59,7 @@ const routes = [
     }
   },
   {
-    path: "/find-employee/:department",
+    path: "/:locale/find-employee/:department",
     name: "Department",
     component: Department,
     
@@ -84,7 +84,7 @@ const routes = [
     }
   },
   {
-    path: "/find-employee/",
+    path: "/:locale/find-employee/",
     name: "Find a government employee ",
     component: Employees,
     child: [

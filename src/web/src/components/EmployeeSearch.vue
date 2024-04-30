@@ -126,7 +126,7 @@ export default {
     },
     emits: ['changeBg'],
     mounted() {
-
+        this.toggleLocale();
         this.$nextTick(() => {
             window.addEventListener('resize', this.onResize);
         })
@@ -164,6 +164,16 @@ export default {
     },
 
     methods: {
+        toggleLocale: function () {
+        const savedLocale = this.$cookies.get("locale");
+        const routeLocale = this.$route.params.locale;
+
+        if (savedLocale != routeLocale) {
+            this.$cookies.set("locale", routeLocale);
+            this.loadLocale(routeLocale);
+            this.$i18n.locale = routeLocale;
+        }
+    },
         onResize() {
             this.windowWidth = window.innerWidth
         },

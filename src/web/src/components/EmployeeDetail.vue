@@ -213,6 +213,7 @@ export default {
   emits: ['changeBg'],
   computed: {},
   mounted() {
+    this.toggleLocale();
     this.$emit('changeBg');
     this.getDataFromApi();
   },
@@ -220,6 +221,16 @@ export default {
     this.getUrl();
   },
   methods: {
+    toggleLocale: function () {
+        const savedLocale = this.$cookies.get("locale");
+        const routeLocale = this.$route.params.locale;
+
+        if (savedLocale != routeLocale) {
+            this.$cookies.set("locale", routeLocale);
+            this.loadLocale(routeLocale);
+            this.$i18n.locale = routeLocale;
+        }
+    },
     getUrl() {
       const urlLocation = String(window.location.href);
       let url = urlLocation.split(window.location.pathname);

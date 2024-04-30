@@ -19,7 +19,7 @@ box-shadow: 1px 3px 3px 0px rgba(163,163,163,0.33) !important;
           
           <v-btn 
           text
-          @click="toggleLocale"
+          @click="toggleLocale(locale)"
           class="text-capitalize"
           >
             {{ locale === 'en' ? 'Français' : 'English' }}
@@ -117,12 +117,21 @@ export default {
         toggleMenu: function () {
             this.menuShow = !this.menuShow;
         },
-        toggleLocale: function () {
+        toggleLocale: function (locale) {
           const currentLocale = this.$cookies.get("locale");
-
           const newLocale = currentLocale === "en" ? "fr" : "en";
+          let currentPath = this.$route.matched[0].path;
+
+          for (const [key, value] of Object.entries(this.$route.params)) {
+            if (key == 'locale') {
+              currentPath = currentPath.replace(':locale', newLocale)
+            } else {
+              currentPath = currentPath.replace(`:${key}`, value);
+            }
+          }
 
           this.$cookies.set("locale", newLocale);
+          this.$router.push({ path: currentPath });
           this.loadLocale(newLocale);
           this.$i18n.locale = newLocale;
         },

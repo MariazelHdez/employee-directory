@@ -84,11 +84,22 @@ export default {
     },
   },
   mounted() {
+    this.toggleLocale();
     this.getEmployeesData();
     this.updateBreadCrumbs();
 
   },
   methods: {
+    toggleLocale: function () {
+        const savedLocale = this.$cookies.get("locale");
+        const routeLocale = this.$route.params.locale;
+
+        if (savedLocale != routeLocale) {
+            this.$cookies.set("locale", routeLocale);
+            this.loadLocale(routeLocale);
+            this.$i18n.locale = routeLocale;
+        }
+    },
     updateBreadCrumbs() {
       this.breadcrumbsList = this.$route.meta.breadcrumb
     },
