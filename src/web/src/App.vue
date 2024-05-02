@@ -5,7 +5,7 @@
       <v-toolbar-title class="bar-title">
         <a href="https://yukon.ca/"><img src="/yukon.svg" style="margin-top:10px;" height="63" /></a>
       </v-toolbar-title>
-      <v-row class="ml-5">
+      <v-row class="ml-5" v-if="isAuthenticated">
         <v-col cols="12">
           <v-btn text href="synonyms">
             Synonyms

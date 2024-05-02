@@ -35,3 +35,8 @@ export const SYNONYMS_FIELDS_DELETE_BATCH = `${config.StaffDirectoryUrl}/DeleteS
 //EMPLOYEES
 export const EMPLOYEE_TITLES = `${config.StaffDirectoryUrl}/EmployeeTitles`;
 export const EMPLOYEE_FIELDS = `${config.StaffDirectoryUrl}/EmployeeFields`;
+
+// EXCEPTIONS
+export const EXCEPTIONS = `${config.StaffDirectoryUrl}/ExceptionFields`;
+export const EXCEPTIONS_DELETE_BATCH = `${config.StaffDirectoryUrl}/DeleteExceptionsBatch`;
+export const EXCEPTIONS_UPDATE = `${config.StaffDirectoryUrl}/ExceptionsUpdate`;
