@@ -105,19 +105,6 @@ const actions = {
 
         }
     },
-    async getSynonymsList({ dispatch, commit }) {
-        try {
-            const resp = await axios.get(SYNONYMS);
-            const data = resp.data;
-
-            if (data?.synonyms) {
-                commit("SET_SYNONYMS_LIST", [...resp.data.synonyms]);
-            }
-        } catch (error) {
-            console.log(error);
-            dispatch("showSnackBar", { message: "Error to get synonyms", status: "error" });
-        }
-    },
     async deleteExceptionBatch({ dispatch }, exceptionIds) {
         try {
             const resp = await axios.post(EXCEPTIONS_DELETE_BATCH, exceptionIds);
