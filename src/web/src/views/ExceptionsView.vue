@@ -1,5 +1,14 @@
 <template>
     <v-container>
+      <v-row no-gutters justify="space-between" class="mb-5">
+        <v-breadcrumbs class="breadcrumbs px-0" color="dark" :items="breadcrumbsList">
+          <template v-slot:item="{ item }">
+            <v-breadcrumbs-item :href="item.link">
+              {{ item.name }}
+            </v-breadcrumbs-item>
+          </template>
+        </v-breadcrumbs>
+      </v-row>
       <v-card>
         <v-card-title>
           <h3>Exceptions</h3>
@@ -206,6 +215,7 @@
           message: "Do you really want to delete this exception permanently?"
         },
         idExceptions: [],
+        breadcrumbsList: this.$route.meta.breadcrumb,
       }
     },
     methods: {
@@ -347,17 +357,20 @@
     },
     computed: {
       ...mapGetters([
-        "employeeFieldsList",
+        "employeeFieldsData",
         "exceptions",
         "originalExceptions",
       ]),
     },
     watch: {
+      '$route'() {
+        this.breadcrumbsList = this.$route.meta.breadcrumb
+      },
       exceptions: function () {
         this.exceptionsList = [ ...this.exceptions ];
       },
-      employeeFieldsList: function () {
-        this.employeeFields = [ ...this.employeeFieldsList ];
+      employeeFieldsData: function () {
+        this.employeeFields = [ ...this.employeeFieldsData ];
       },
       originalExceptions: function () {
         this.exceptionsOriginalList = [ ...this.originalExceptions ];
@@ -370,7 +383,7 @@
     await this.getEmployeeFields();
 
     this.exceptionsList = [ ...this.exceptions ];
-    this.employeeFields = [ ...this.employeeFieldsList ];
+    this.employeeFields = [ ...this.employeeFieldsData ];
     this.exceptionsOriginalList = [ ...this.originalExceptions ];
 
     this.loadingTable = false;

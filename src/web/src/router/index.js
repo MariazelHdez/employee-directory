@@ -34,6 +34,11 @@ const routes = [
     component: SynonymsMkUp,
     meta: {
       requiresAuth: true,
+      breadcrumb: [
+        {name: 'Yukon.ca home', link: 'https://yukon.ca/'},
+        {name: 'Find a government employee', link: '/Find-Employee'},
+        {name: 'Synonyms terms'},
+      ],
     },
   },
   {
@@ -42,6 +47,11 @@ const routes = [
     component: ExceptionsView,
     meta: {
       requiresAuth: true,
+      breadcrumb: [
+        {name: 'Yukon.ca home', link: 'https://yukon.ca/'},
+        {name: 'Find a government employee', link: '/Find-Employee'},
+        {name: 'Exceptions'},
+      ],
     },
   },
   {
@@ -50,6 +60,11 @@ const routes = [
     component: SortPositionView,
     meta: {
       requiresAuth: true,
+      breadcrumb: [
+        {name: 'Yukon.ca home', link: 'https://yukon.ca/'},
+        {name: 'Find a government employee', link: '/Find-Employee'},
+        {name: 'Sort positions'},
+      ],
     },
   },
   {

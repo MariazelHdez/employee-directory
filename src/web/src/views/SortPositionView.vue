@@ -1,5 +1,14 @@
 <template>
   <v-container>
+    <v-row no-gutters justify="space-between" class="mb-5">
+      <v-breadcrumbs class="breadcrumbs px-0" color="dark" :items="breadcrumbsList">
+        <template v-slot:item="{ item }">
+          <v-breadcrumbs-item :href="item.link">
+            {{ item.name }}
+          </v-breadcrumbs-item>
+        </template>
+      </v-breadcrumbs>
+    </v-row>
     <v-card>
       <v-card-title>
         <h3>Sort Positions</h3>
@@ -160,6 +169,7 @@
         titleList: [],
         search: null,
         loading: false,
+        breadcrumbsList: this.$route.meta.breadcrumb,
       };
     },
     methods: {
@@ -309,6 +319,9 @@
       }
     },
     watch: {
+      '$route'() {
+        this.breadcrumbsList = this.$route.meta.breadcrumb
+      },
       sortPositions: function () {
         this.terms = [ ...this.sortPositions ];
         this.backupTerms = [ ...this.sortPositions ];

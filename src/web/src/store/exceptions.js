@@ -7,12 +7,12 @@ import { EMPLOYEE_FIELDS,
 import { StaffDirectoryUrl } from "../config";
 
 const state = {
-    employeeFieldsList: [],
+    employeeFieldsData: [],
 	exceptions: [],
 	originalExceptions: [],
 };
 const getters = {
-    employeeFieldsList: state => state.employeeFieldsList,
+    employeeFieldsData: state => state.employeeFieldsData,
 	exceptions: state => state.exceptions,
 	originalExceptions: state => state.originalExceptions,
 };
@@ -144,8 +144,8 @@ const actions = {
     },
 };
 const mutations = {
-    SET_EMPLOYEE_FIELDS(state, employeeFieldsList) {
-        state.employeeFieldsList = employeeFieldsList;
+    SET_EMPLOYEE_FIELDS(state, employeeFieldsData) {
+        state.employeeFieldsData = employeeFieldsData;
     },
 	SET_EXCEPTIONS(state, exceptions){
 		state.exceptions = exceptions;

@@ -2,6 +2,7 @@ import axios from "axios";
 import { SYNONYMS,
         TERMS,
         TERMS_DELETE,
+        TERMS_UPDATE,
         SYNONYMS_DELETE,
         SYNONYMS_FIELDS,
         SYNONYMS_FIELDS_DELETE_TERM,
@@ -271,6 +272,19 @@ const actions = {
         } finally {
             dispatch("getSynonyms");
 
+        }
+    },
+    async UpdateTerm({ dispatch }, { termId, termData }) {
+        try {
+            const resp = await axios.patch(`${TERMS_UPDATE}/${termId}`, termData);
+            const data = resp.data;
+
+            if (data?.success) {
+                dispatch("showSnackBar", { message: data.message, status: "success" });
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch("showSnackBar", { message: "error to delete term", status: "error" });
         }
     },
 };

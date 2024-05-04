@@ -1,5 +1,14 @@
 <template>
   <v-container>
+    <v-row no-gutters justify="space-between" class="mb-5">
+      <v-breadcrumbs class="breadcrumbs px-0" color="dark" :items="breadcrumbsList">
+        <template v-slot:item="{ item }">
+          <v-breadcrumbs-item :href="item.link">
+            {{ item.name }}
+          </v-breadcrumbs-item>
+        </template>
+      </v-breadcrumbs>
+    </v-row>
     <v-card>
       <v-card-title>
         <h3>Synonym terms</h3>
@@ -50,12 +59,12 @@
         </template>
 
         <template v-slot:[`item.term_id`]="{ item }">
-          <v-btn color="error" x-small>
-            <v-icon small @click="DeleteSynonym(item.term_id)">mdi-delete</v-icon>
-          </v-btn>
-          &nbsp;&nbsp;
           <v-btn color="primary" x-small>
             <v-icon small @click="editSynonym(item.term_id)">mdi-pencil</v-icon>
+          </v-btn>
+          &nbsp;&nbsp;
+          <v-btn color="error" x-small>
+            <v-icon small @click="DeleteSynonym(item.term_id)">mdi-delete</v-icon>
           </v-btn>
         </template>
       </v-data-table>
@@ -71,25 +80,6 @@
       <template v-slot:inputs>
         <v-row justify="start" align="center">
           <v-col cols="12">
-            <v-select
-              :items="termsList"
-              v-model="selectedTerm"
-              :disabled="selectTermDisabled"
-              label="Terms"
-              id="term-select"
-              @change="changeTerm"
-            >
-            </v-select>
-            <v-checkbox
-              label="Create a new term"
-              color="primary"
-              @click="showTermCreate"
-              v-if="actionType === 'C'"
-              v-model="checkedTerm"
-            ></v-checkbox>
-          </v-col>
-
-          <v-col cols="12" v-if="showTermInput">
             <v-text-field
 							label="Term"
 							v-model="newTermInput"
@@ -225,6 +215,7 @@ import { mapActions, mapGetters } from "vuex";
 import { SYNONYMS_CREATE, TERMS_CREATE, SYNONYMS_FIELDS_CREATE, SYNONYMS_UPDATE, TERMS_UPDATE } from "../urls";
 import ConfirmDialog from "../components/ConfirmDialog.vue";
 import store from "../store";
+import * as urls from "../urls";
 
 export default {
   components: {
@@ -286,10 +277,10 @@ export default {
       selectedFields: [],
       originalSelectedFields: [],
       actionType: '',
-      checkedTerm: false,
       checkedField: false,
       showUpdateValidation: false,
       selectedField: null,
+      breadcrumbsList: this.$route.meta.breadcrumb,
     }
   },
   methods: {
@@ -307,6 +298,7 @@ export default {
         deleteFieldsBatch: "deleteFieldsBatch",
         refreshSynonyms:"refreshSynonyms",
         getEmployeeFields: "getEmployeeFields",
+        UpdateTerm: "UpdateTerm",
     }),
     filterFields(fields, type){
       let filteredElements = [];
@@ -401,6 +393,7 @@ export default {
       }
 
       this.selectedTerm = synonym.term_id;
+      this.newTermInput = synonym.term;
 
       let synonyms = synonym.synonym.split(',');
 
@@ -454,7 +447,6 @@ export default {
       this.showFieldInput = false;
       this.newTermInput = null;
       this.newSynonym = null;
-      this.checkedTerm = false;
       this.showTermInput = false;
       this.newTermInput = null;
       this.selectedTerm = null;
@@ -547,32 +539,16 @@ export default {
     },
     validateCreation() {
 
-      if(this.checkedTerm == true){
-        if(this.newTermInput == null){
-          this.showMessageSave = true;
-        }else{
-          this.showMessageSave = false;
-        }
-
-        if (this.selectedFields.length == 0) {
-          this.showMessageField = true;
-        }else{
-          this.showMessageField = false;
-        }
-
+      if(this.newTermInput == null){
+        this.showMessageSave = true;
       }else{
-        if(this.selectedTerm == null){
-          this.showMessageSave = true;
-        }else{
-          this.showMessageSave = false;
-        }
+        this.showMessageSave = false;
+      }
 
-        if(this.selectedFields.length == 0){
-          this.showMessageFieldsSelect = true;
-        }else{
-          this.showMessageFieldsSelect = false;
-        }
-
+      if (this.selectedFields.length == 0) {
+        this.showMessageField = true;
+      }else{
+        this.showMessageField = false;
       }
 
       if(this.newTerm.synonyms.length == 0){
@@ -753,6 +729,13 @@ export default {
 
       }
 
+      let termData = {
+          id: this.idSynonym,
+          term: this.newTermInput
+      }
+
+      this.UpdateTerm({ termId: this.idSynonym, termData });
+
       let dataSynonym = {
           term_id: this.selectedTerm,
           synonym: this.newSynonym
@@ -825,6 +808,9 @@ export default {
     ]),
   },
   watch: {
+    '$route'() {
+      this.breadcrumbsList = this.$route.meta.breadcrumb
+    },
     synonyms: function () {
       this.termsSynonym = [ ...this.synonyms ];
     },
