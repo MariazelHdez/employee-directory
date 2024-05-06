@@ -245,7 +245,7 @@ export default {
     },
     checkError() {
       if (this.error === true) {
-        window.location.href = this.url + '/page-not-found'
+        // window.location.href = this.url + '/page-not-found'
       }
     },
     activateBranches(item) {
@@ -343,13 +343,17 @@ export default {
         )
         .then((resp) => {
           this.employeesNotFound = resp.data.meta.notFound
+          debugger
           this.error = resp.data.meta.error;
           this.checkError();
           this.items = resp.data.data;
           this.totalLength = resp.data.meta.count;
           this.loading = false;
         })
-        .catch((err) => console.error(err))
+        .catch((err) => {
+          console.error(err)
+          this.checkError();
+        })
         .finally(() => {
           this.loading = false;
         });

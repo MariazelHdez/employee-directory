@@ -2915,7 +2915,10 @@ export const en = {
       "Phone number" : "Phone number",
     },
     not_found: {
-      page_not_found: "Page non trouvée",
+      page_not_found: "Page not found",
+      home: {
+        title: "Home"
+      },
       page_is_not_here: {
         title: "Sorry, that page isn't here.",
         body: "You didn't do anything wrong. We may have moved the page you're looking for somewhere else."

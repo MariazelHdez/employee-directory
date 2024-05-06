@@ -33,7 +33,7 @@
         <h2>{{ $t("components.not_found.address_wrong_message.title") }}</h2>
         <p>{{ $t("components.not_found.address_wrong_message.body") }}</p>
       </v-card>
-      <v-btn class="my-8" @click="$router.push('/')" height="40px" color="#00616D">Home</v-btn>
+      <v-btn class="my-8" @click="$router.push('/')" height="40px" color="#00616D">{{ $t("components.not_found.home.title") }}</v-btn>
     </v-container>
   </div>
 </template>
@@ -66,12 +66,23 @@ export default {
   },
   emits: ['changeBg'],
   mounted() {
+    this.toggleLocale();
     this.updateBreadCrumbs();
     this.$emit('changeBg');
   },
   methods: {
     updateBreadCrumbs() {
       this.breadcrumbsList = this.$route.meta.breadcrumb
+    },
+    toggleLocale: function () {
+        const savedLocale = this.$cookies.get("locale");
+        const routeLocale = this.$route.params.locale;
+
+        if (savedLocale != routeLocale) {
+            this.$cookies.set("locale", routeLocale);
+            this.loadLocale(routeLocale);
+            this.$i18n.locale = routeLocale;
+        }
     },
   },
 }
