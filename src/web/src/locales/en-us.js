@@ -2835,7 +2835,8 @@ export const en = {
         see_all_employees: "See all government employees",
         location: "Location",
         position: "Position",
-        results: "Results"
+        results: "Results",
+        not_found: "Division not found"
       },
     },
     employee_details: {
@@ -2916,6 +2917,8 @@ export const en = {
     },
     not_found: {
       page_not_found: "Page not found",
+      fullpath: "The requested page",
+      fullpath_sufix: "could not be found.",
       home: {
         title: "Home"
       },

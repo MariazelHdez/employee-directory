@@ -243,7 +243,11 @@ export default {
     },
     checkError() {
       if (this.error === true) {
-        window.location.href = this.url + '/page-not-found/';
+        const savedLocale = this.$cookies.get("locale");
+        this.$cookies.set("latestFullPath", this.$route.fullPath);
+
+        const currentPath = `/${savedLocale}/page-not-found`
+        this.$router.push({ path: currentPath });
       }
     },
     setCenter(marker) {
@@ -261,7 +265,7 @@ export default {
           const numberFormatted = number.replace(reg, "");
           const link = "tel:" + numberFormatted;
           return String(link);
-      }else{
+      } else {
          return '';
       }
     

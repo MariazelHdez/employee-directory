@@ -15,6 +15,7 @@
       </v-breadcrumbs>
 
       <h1 class="my-16" style="font-weight:600 !important; font-size: 34px;">{{ $t("components.not_found.page_not_found") }}</h1>
+      <h1 style="font-weight:500">{{ $t("components.not_found.fullpath") }} {{ latestFullPath }} {{ $t("components.not_found.fullpath_sufix") }}</h1>
       <v-card class="not-found-card mb-6" color="transparent" outlined>
         <h2>{{ $t("components.not_found.page_is_not_here.title") }}</h2>
         <p>{{ $t("components.not_found.page_is_not_here.body") }}</p>
@@ -69,6 +70,7 @@ export default {
     this.toggleLocale();
     this.updateBreadCrumbs();
     this.$emit('changeBg');
+    this.latestFullPath = this.$cookies.get("latestFullPath");
   },
   methods: {
     updateBreadCrumbs() {

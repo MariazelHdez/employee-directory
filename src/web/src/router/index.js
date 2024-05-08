@@ -72,7 +72,7 @@ const routes = [
     }
   },
   {
-    path: "/:locale/not-found",
+    path: "/:locale/page-not-found",
     name: "Not Found",
     component: NotFound,
     meta: {
