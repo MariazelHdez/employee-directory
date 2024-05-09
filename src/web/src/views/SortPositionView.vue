@@ -66,30 +66,34 @@
             :key="item.weight"
           >
             <v-row no-gutters class="pa-1 drag-row">
-              <v-icon
-                small
-                class="page__grab-icon mr-5"
-                style="cursor:pointer"
-              >
-                mdi-arrow-all
-              </v-icon>
-
-              <div
-                class="align-content-center"
-                style="cursor:pointer"
-              ><v-chip color="primary">{{ item.weight }}</v-chip>&nbsp;&nbsp;{{ item.description }}</div>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="error"
-                x-small
-                @click="showRemoveDialog(item)"
-              >
+              <v-col cols="12" sm="12" md="1" lg="1" class="mw-5">
                 <v-icon
                   small
+                  class="page__grab-icon mr-5"
+                  style="cursor:pointer"
                 >
-                  mdi-delete
+                  mdi-arrow-all
                 </v-icon>
-              </v-btn>
+              </v-col>
+              <v-col cols="12" sm="12" md="10" lg="10">
+                <div
+                  class="align-content-center"
+                  style="cursor:pointer"
+                ><v-chip color="primary">{{ item.weight }}</v-chip>&nbsp;&nbsp;{{ item.description }}</div>
+                </v-col>
+                <v-col cols="12" sm="12" md="1" lg="1">
+                <v-btn
+                  color="error"
+                  x-small
+                  @click="showRemoveDialog(item)"
+                >
+                  <v-icon
+                    small
+                  >
+                    mdi-delete
+                  </v-icon>
+                </v-btn>
+              </v-col>
             </v-row>
           </div>
           </transition-group>

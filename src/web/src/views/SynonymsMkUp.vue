@@ -95,7 +95,7 @@
             <p class="font-weight-bold red--text" ><v-icon class="red--text">mdi-alert</v-icon>Term already exists</p>
           </v-col>
 
-          <v-col cols="9">
+          <v-col cols="12" sm="12" md="9" lg="9">
             <v-text-field
               label="Synonym(s)*"
               v-model="newSynonym"
@@ -105,7 +105,7 @@
             </v-text-field>
           </v-col>
 
-          <v-col cols="3">
+          <v-col cols="12" sm="12" md="9" lg="3">
             <v-btn @click="addToSynonyms" color="primary">
               <v-icon>mdi-plus</v-icon>&nbsp;Add Synonym
             </v-btn>
@@ -122,7 +122,7 @@
             </v-chip>
           </v-col>
 
-          <v-col cols="12" class="mb-2" v-else>
+          <v-col cols="12" class="mb-2" sm="12" md="9" lg="12" v-else>
             <v-chip
               close
               v-for="item, index of newTerm.synonyms"
@@ -148,42 +148,6 @@
           <v-col cols="12" v-if="showMessageFieldsSelect">
             <p class="font-weight-bold red--text" ><v-icon class="red--text">mdi-alert</v-icon>Select synonym fields</p>
           </v-col>
-
-          <!--v-col cols="12" class="mb-2">
-            <v-checkbox
-              label="Add New Fields"
-              color="primary"
-              @click="showFieldCreate"
-              v-model="checkedField"
-            ></v-checkbox>
-          </v-col>
-
-          <v-col cols="9" v-if="showFieldInput">
-            <v-text-field
-              label="New Field(s)"
-              v-model="newField"
-              hint="Click the button to Add a new Field"
-              persistent-hint
-            >
-            </v-text-field>
-          </v-col>
-
-          <v-col cols="3" v-if="showFieldInput">
-            <v-btn @click="addToFields" color="primary">
-              <v-icon>mdi-plus</v-icon>&nbsp;Add field
-            </v-btn>
-          </v-col>
-
-          <v-col cols="12" class="mb-2" v-if="showFieldInput">
-            <v-chip
-              close
-              v-for="item, index of newTerm.fields"
-              @click:close="deleteChip('field', index)"
-              :key="index"
-            >
-              {{ item }}
-            </v-chip>
-          </v-col-->
 
           <v-col cols="12" v-if="showMessageField">
             <p class="font-weight-bold red--text" ><v-icon class="red--text">mdi-alert</v-icon>Fields are required for new terms</p>

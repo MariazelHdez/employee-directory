@@ -10,6 +10,14 @@
 			If you have already authenticated with Vivvo and your session is still
 			active, it may skip the sign in process and return you here immediately.
 		</p>
+		<v-alert
+			v-if="loginFailed"
+			dense
+			text
+			type="error"
+		>
+			Authentication failed. <strong>Email does not exist</strong>. Please try signing in again.
+		</v-alert>
         <v-btn color="primary" @click="redirect">
             Click here to sign in
         </v-btn>
@@ -23,7 +31,12 @@ export default {
     data() { 
         return {
             title: "Sign in to Employee Directory",
+			loginFailed: false,
         }
+    },
+	created() {
+        const params = new URLSearchParams(window.location.search);
+        this.loginFailed = params.get('loginFailed') === 'true';
     },
 	methods: {
 		redirect() {

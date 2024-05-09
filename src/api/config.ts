@@ -24,3 +24,5 @@ export const CLIENT_SECRET = process.env.CLIENT_SECRET || "";
 export const CLIENT_ID = process.env.CLIENT_ID || "";
 export const ISSUER_BASE_URL = process.env.ISSUER_BASE_URL || "";
 export const SECRET = process.env.SECRET || "";
+
+export const APP_STAFF_DIRECTORY_URL = process.env.APP_STAFF_DIRECTORY_URL || "http://localhost:64089";

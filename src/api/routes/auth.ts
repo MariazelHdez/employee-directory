@@ -8,6 +8,7 @@ import {
     ISSUER_BASE_URL,
     FRONTEND_URL,
     AUTH_REDIRECT,
+    APP_STAFF_DIRECTORY_URL,
 } from '../config';
 import axios from "axios";
 
@@ -37,40 +38,50 @@ export function configureAuthentication(app: Express) {
         },
     }));
 
-    app.use("/", async (req: Request | any, res: Response, next: NextFunction) => {
+    app.use(async (req: Request | any, res: Response, next: NextFunction) => {
         try {
-                
+
             if (req.oidc.isAuthenticated()) {
-                
                 const user = req.oidc.user;
-                
-                req.user = {
-                    display_name: user.name,
-                    last_name: user.family_name,
-                    first_name: user.given_name,
-                    email: user.email,
-                    email_verified: user.email_verified,
-                };
+                const email = user.email;
 
-                (req.session as any).user = req.user;
+                const response = await axios.get(`${APP_STAFF_DIRECTORY_URL}/GetUserByEmail`, {
+                    params: { email },
+                });
 
+                if (response.data && response.data.user && response.data.user.length > 0) {
+                    req.user = {
+                        display_name: user.name,
+                        last_name: user.family_name,
+                        first_name: user.given_name,
+                        email: user.email,
+                        email_verified: user.email_verified,
+                    };
+
+                    (req.session as any).user = req.user;
+                    req.session.emailExists = true;
+                } else {
+                    req.session.emailExists = false;
+                    console.log(`User email ${email} does not exist in the database.`);
+                }
             }
 
             return next();
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return next();
         }
     });
 
     app.get("/", async (req: Request, res: Response) => {
-
-        if (req.oidc.isAuthenticated()) {
+        console.log(req.session?.emailExists);
+        if (req.oidc.isAuthenticated() && req.session?.emailExists == true) {
             res.redirect(FRONTEND_URL+"/settings/synonyms");
         } else {
             // this is hard-coded to accomodate strage behaving in sendFile not allowing `../` in the path.
             // this won't hit in development because web access is served by the Vue CLI - only an issue in Docker
-            res.sendFile("/home/node/app/dist/web/index.html");
+
+            res.redirect(FRONTEND_URL + "/settings/login?loginFailed=true");
         }
     });
 

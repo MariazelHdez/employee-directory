@@ -1,28 +1,82 @@
 <template>
   <v-app>
-    <v-app-bar flat height="77" max-height="77" class="shadow" color="white" elevation="2">
-      <!-- Image as the title -->
-      <v-toolbar-title class="bar-title">
-        <a href="https://yukon.ca/"><img src="/yukon.svg" style="margin-top:10px;" height="63" /></a>
-      </v-toolbar-title>
-      <v-row class="ml-5" v-if="isAuthenticated">
-        <v-col cols="12">
-          <v-btn text href="synonyms">
-            Synonyms
-          </v-btn>
-          <v-btn text href="sorting">
-            Sorting
-          </v-btn>
-          <v-btn text href="exceptions">
-            Exceptions
-          </v-btn>
-        </v-col>
-      </v-row>
-      <v-spacer></v-spacer>
-      <v-btn v-if="isAuthenticated" @click="logout" class="mr-10">
-        <v-icon>mdi-logout</v-icon>&nbsp;Logout
-      </v-btn>
-    </v-app-bar>
+    <div id="app">
+      <v-navigation-drawer v-model="drawer" app :temporary="$vuetify.breakpoint.mdAndUp">
+        <v-list class="mt-15">
+          <v-list-item link @click="drawer = false">
+            <v-list-item-icon>
+              <v-icon>mdi-circle-small</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-btn text href="/settings/synonyms">
+                  Synonyms
+                </v-btn>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item link @click="drawer = false">
+            <v-list-item-icon>
+              <v-icon>mdi-circle-small</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-btn text href="/settings/sorting">
+                  Sorting
+                </v-btn>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item link @click="drawer = false">
+            <v-list-item-icon>
+              <v-icon>mdi-circle-small</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-btn text href="/settings/exceptions">
+                  Exceptions
+                </v-btn>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item link @click="drawer = false" class="mt-15">
+            <v-list-item-icon>
+              <v-icon>mdi-logout</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-btn v-if="isAuthenticated" @click="logout">
+                  Logout
+                </v-btn>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+
+      <v-app-bar flat height="77" max-height="77" class="shadow" color="white" elevation="2" dense>
+        <v-app-bar-nav-icon 
+          @click="drawer = !drawer" 
+          v-show="!$vuetify.breakpoint.mdAndUp"
+        ></v-app-bar-nav-icon>
+        <v-toolbar-title class="bar-title">
+          <a href="https://yukon.ca/"><img src="/yukon.svg" style="margin-top:10px;" height="63" /></a>
+        </v-toolbar-title>
+        <v-btn text href="/settings/synonyms" v-show="$vuetify.breakpoint.mdAndUp">
+          Synonyms
+        </v-btn>
+        <v-btn text href="/settings/sorting" v-show="$vuetify.breakpoint.mdAndUp">
+          Sorting
+        </v-btn>
+        <v-btn text href="/settings/exceptions" v-show="$vuetify.breakpoint.mdAndUp">
+          Exceptions
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn v-if="isAuthenticated" @click="logout" class="mr-10" v-show="$vuetify.breakpoint.mdAndUp">
+          <v-icon>mdi-logout</v-icon>&nbsp;Logout
+        </v-btn>
+      </v-app-bar>
+    </div>
 
     <v-main :class="{ 'no-bg-img': noBgImg === false }">
       <!-- Provides the application the proper gutter -->

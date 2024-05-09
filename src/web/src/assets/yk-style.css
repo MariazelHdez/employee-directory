@@ -282,6 +282,10 @@ a:hover{
 }
 
 .bar-title{
-  padding-left: 15%;
-  margin: 15px;
+  padding-left: 15% !important;
+  margin-right: 5%;
+}
+
+.mw-5{
+  max-width: 5%;
 }
