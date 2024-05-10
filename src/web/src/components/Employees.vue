@@ -1,5 +1,14 @@
 <template>
   <div class="Homepage-departments">
+    <v-alert
+			v-if="loginFailed"
+			dense
+			text
+			type="error"
+      class="mt-10"
+		>
+			Authentication failed. <strong>Unauthorized user</strong>, please contact the site administrator.
+		</v-alert>
     <SearchBarHeader class="z-indx" :info="this.findEmployeeHeaderInfo" />
     
     <Aurora/>
@@ -75,6 +84,7 @@ export default {
     item: [],
     options: {},
     findEmployeeHeaderInfo: true,
+    loginFailed: false,
   }),
   watch: {
     options: {
@@ -123,6 +133,10 @@ export default {
         });
 
     },
+  },
+  created() {
+    const params = new URLSearchParams(window.location.search);
+    this.loginFailed = params.get('loginFailed') === 'true';
   },
 };
 </script>

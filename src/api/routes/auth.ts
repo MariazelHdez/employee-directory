@@ -38,12 +38,12 @@ export function configureAuthentication(app: Express) {
         },
     }));
 
-    app.use(async (req: Request | any, res: Response, next: NextFunction) => {
+    app.use("/", async (req: Request | any, res: Response, next: NextFunction) => {
         try {
 
             if (req.oidc.isAuthenticated()) {
                 const user = req.oidc.user;
-                const email = user.email;
+                const email = user.email.trim().toLowerCase();
 
                 const response = await axios.get(`${APP_STAFF_DIRECTORY_URL}/GetUserByEmail`, {
                     params: { email },
@@ -63,6 +63,27 @@ export function configureAuthentication(app: Express) {
                 } else {
                     req.session.emailExists = false;
                     console.log(`User email ${email} does not exist in the database.`);
+
+                    const claims = req.oidc.idTokenClaims;
+
+                    if (claims) {
+                        const url = `${claims.iss}v2/logout?returnTo=${FRONTEND_URL}&client_id=${claims.aud}`;
+                        const result = await axios.get(url);
+                        if (result?.statusText === 'OK') {
+                            req.appSession = undefined;
+                            req.session.destroy((err: NodeJS.ErrnoException | null) => {
+                                if (err) {
+                                    console.error('Session destruction failed:', err);
+                                    throw err;
+                                }
+
+                                res.redirect(FRONTEND_URL + "/find-employee?loginFailed=true");
+                            });
+                        }
+                    }else{
+                        res.status(401).send('Unauthorized: No active session');
+                    }
+
                 }
             }
 
@@ -74,14 +95,13 @@ export function configureAuthentication(app: Express) {
     });
 
     app.get("/", async (req: Request, res: Response) => {
-        console.log(req.session?.emailExists);
+
         if (req.oidc.isAuthenticated() && req.session?.emailExists == true) {
             res.redirect(FRONTEND_URL+"/settings/synonyms");
         } else {
             // this is hard-coded to accomodate strage behaving in sendFile not allowing `../` in the path.
             // this won't hit in development because web access is served by the Vue CLI - only an issue in Docker
-
-            res.redirect(FRONTEND_URL + "/settings/login?loginFailed=true");
+            res.sendFile("/home/node/app/dist/web/index.html");
         }
     });
 
