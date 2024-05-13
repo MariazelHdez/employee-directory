@@ -6,7 +6,7 @@ import Employees from "../components/Employees";
 import Department from "../components/Department";
 import EmployeeDetail from "../components/EmployeeDetail";
 import EmployeeSearch from "../components/EmployeeSearch";
-import SynonymsMkUp from '@/views/SynonymsMkUp'
+import Synonyms from '@/views/Synonyms'
 import ExceptionsView from '@/views/ExceptionsView'
 import SortPositionView from '@/views/SortPositionView'
 import store from "../store";
@@ -31,7 +31,7 @@ const routes = [
   {
     path: "/settings/synonyms",
     name: "Synonyms",
-    component: SynonymsMkUp,
+    component: Synonyms,
     meta: {
       requiresAuth: true,
       breadcrumb: [
