@@ -19,6 +19,7 @@ const state = {
     fields: [],
     listSynonyms: [],
     employeeFieldsList: [],
+    page: 1,
 };
 const getters = {
     synonyms: state => state.synonyms,
@@ -26,6 +27,7 @@ const getters = {
     fields: state => state.fields,
     listSynonyms: state => state.listSynonyms,
     employeeFieldsList: state => state.employeeFieldsList,
+    page: state => state.page,
 };
 const actions = {
     async getSynonyms({ dispatch, commit }) {
@@ -303,6 +305,9 @@ const mutations = {
     },
     SET_EMPLOYEE_FIELDS(state, employeeFieldsList) {
         state.employeeFieldsList = employeeFieldsList;
+    },
+    SET_PAGE(state, page) {
+        state.page = page;
     },
 };
 

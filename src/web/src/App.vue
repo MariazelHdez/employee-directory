@@ -1,6 +1,11 @@
 <template>
   <v-app>
     <div id="app">
+      <div class="text-center loading" v-show="loading">
+        <v-progress-circular :size="75" color="primary" indeterminate>
+          <span class="loadingText">Redirecting to logout platform</span>
+        </v-progress-circular>
+      </div>
       <v-navigation-drawer v-model="drawer" app :temporary="$vuetify.breakpoint.mdAndUp">
         <v-list class="mt-15">
           <v-list-item link @click="drawer = false">
@@ -9,7 +14,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                <v-btn text href="/settings/synonyms">
+                <v-btn text href="/settings/synonyms" v-if="isAuthenticated">
                   Synonyms
                 </v-btn>
               </v-list-item-title>
@@ -21,7 +26,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                <v-btn text href="/settings/sorting">
+                <v-btn text href="/settings/sorting" v-if="isAuthenticated">
                   Sorting
                 </v-btn>
               </v-list-item-title>
@@ -33,7 +38,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                <v-btn text href="/settings/exceptions">
+                <v-btn text href="/settings/exceptions" v-if="isAuthenticated">
                   Exceptions
                 </v-btn>
               </v-list-item-title>
@@ -62,13 +67,13 @@
         <v-toolbar-title class="bar-title">
           <a href="https://yukon.ca/"><img src="/yukon.svg" style="margin-top:10px;" height="63" /></a>
         </v-toolbar-title>
-        <v-btn text href="/settings/synonyms" v-show="$vuetify.breakpoint.mdAndUp">
+        <v-btn text href="/settings/synonyms" v-show="$vuetify.breakpoint.mdAndUp" v-if="isAuthenticated">
           Synonyms
         </v-btn>
-        <v-btn text href="/settings/sorting" v-show="$vuetify.breakpoint.mdAndUp">
+        <v-btn text href="/settings/sorting" v-show="$vuetify.breakpoint.mdAndUp" v-if="isAuthenticated">
           Sorting
         </v-btn>
-        <v-btn text href="/settings/exceptions" v-show="$vuetify.breakpoint.mdAndUp">
+        <v-btn text href="/settings/exceptions" v-show="$vuetify.breakpoint.mdAndUp" v-if="isAuthenticated">
           Exceptions
         </v-btn>
         <v-spacer></v-spacer>
@@ -145,6 +150,7 @@ export default {
         applicationName: config.applicationName,
         applicationIcon: config.applicationIcon,
         sections: config.sections,
+        loading: false,
     }),
     created: async function () {
     },
@@ -172,7 +178,9 @@ export default {
           return show;
         },
         logout() {
-          store.dispatch("signOut");
+          this.loading = true;
+          this.$store.dispatch("signOut");
+          this.loading = false;
         },
     },
     components: { IconLoader, FeedbackForm, ShowMessage },

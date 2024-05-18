@@ -33,7 +33,16 @@ const actions = {
             
             if (data?.logout) {
                 commit("CLEAR_USER");
-                router.push({ name: "Login" });
+
+                const logoutUrl = new URL(data.logoutExternalUrl);
+                const baseUrl = new URL(data.baseUrl);
+
+                if (logoutUrl.hostname ===  baseUrl.hostname) {
+                    window.location.href = data.logoutExternalUrl;
+                } else {
+                    router.push({ name: "Login" });
+                }
+
             }
         } catch (error) {
             console.log(error);

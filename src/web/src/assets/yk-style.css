@@ -289,3 +289,8 @@ a:hover{
 .mw-5{
   max-width: 5%;
 }
+
+.loadingText{
+  margin-top: 200px;
+  width: 250px
+}

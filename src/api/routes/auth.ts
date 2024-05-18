@@ -68,16 +68,20 @@ export function configureAuthentication(app: Express) {
 
                     if (claims) {
                         const url = `${claims.iss}v2/logout?returnTo=${FRONTEND_URL}&client_id=${claims.aud}`;
+
                         const result = await axios.get(url);
                         if (result?.statusText === 'OK') {
                             req.appSession = undefined;
+                            res.clearCookie('connect.sid', { path: '/', httpOnly: true, secure: true });
+                            res.clearCookie('appSession', { path: '/', httpOnly: true, secure: true });
+                            res.clearCookie('auth_verification', { path: '/', httpOnly: true, secure: true });
                             req.session.destroy((err: NodeJS.ErrnoException | null) => {
                                 if (err) {
                                     console.error('Session destruction failed:', err);
                                     throw err;
                                 }
 
-                                res.redirect(FRONTEND_URL + "/find-employee?loginFailed=true");
+                                res.redirect(url);
                             });
                         }
                     }else{
@@ -132,25 +136,49 @@ export function configureAuthentication(app: Express) {
 
         if (claims) {
             try {
-                const url = `${claims.iss}v2/logout?returnTo=${FRONTEND_URL}&client_id=${claims.aud}`;
+
+                const url = `${claims.iss}v2/logout?federated&returnTo=${FRONTEND_URL}&client_id=${claims.aud}`;
                 console.log("URL ", url);
 
-                // Use axios.get with the provided URL
                 const result = await axios.get(url);
-		        console.log("RESULT: ", result);
-                if (result?.statusText === 'OK') {
+                if (result.status === 200) {
+
+                    //Delete session cookies
                     req.appSession = undefined;
-                    req.session.destroy();
-                    res.status(200);
-                    return res.send({
-                        data: {
-                            logout: true,
-                            redirect: AUTH_REDIRECT,
-                        },
-                    });
+                    res.clearCookie('connect.sid', { path: '/', httpOnly: true, secure: true });
+                    res.clearCookie('appSession', { path: '/', httpOnly: true, secure: true });
+
+                    if (req.session) {
+                        req.session.destroy((err: any) => {
+                            if (err) {
+                                console.error('Error destroying session:', err);
+                                return res.status(500).send({
+                                    error: {
+                                        message: 'Failed to destroy session',
+                                    }
+                                });
+                            }
+
+                            res.status(200).send({
+                                data: {
+                                    logout: true,
+                                    redirect: AUTH_REDIRECT,
+                                    logoutExternalUrl: url,
+                                    baseUrl: ISSUER_BASE_URL
+                                },
+                            });
+                        });
+                    } else {
+                        res.status(200).send({
+                            data: {
+                                logout: true,
+                                redirect: AUTH_REDIRECT,
+                            },
+                        });
+                    }
                 }
             } catch (error: any) {
-		    console.log(error);
+                console.log(error);
                 return res.status(error.response?.status || 500).send({
                     error: {
                         message: 'Logout failed',
