@@ -67,7 +67,8 @@ export function configureAuthentication(app: Express) {
                     const claims = req.oidc.idTokenClaims;
 
                     if (claims) {
-                        const url = `${claims.iss}v2/logout?returnTo=${FRONTEND_URL}&client_id=${claims.aud}`;
+                        const returnToUrl = encodeURIComponent(`${FRONTEND_URL}?loginFailed=true`);
+                        const url = `${claims.iss}v2/logout?returnTo=${returnToUrl}&client_id=${claims.aud}`;
 
                         const result = await axios.get(url);
                         if (result?.statusText === 'OK') {
@@ -137,7 +138,7 @@ export function configureAuthentication(app: Express) {
         if (claims) {
             try {
 
-                const url = `${claims.iss}v2/logout?federated&returnTo=${FRONTEND_URL}&client_id=${claims.aud}`;
+                const url = `${claims.iss}v2/logout?returnTo=${FRONTEND_URL}&client_id=${claims.aud}`;
                 console.log("URL ", url);
 
                 const result = await axios.get(url);
