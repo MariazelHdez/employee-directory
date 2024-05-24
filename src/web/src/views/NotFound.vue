@@ -33,7 +33,6 @@
         <h2>{{ $t("components.not_found.address_wrong_message.title") }}</h2>
         <p>{{ $t("components.not_found.address_wrong_message.body") }}</p>
       </v-card>
-      <v-btn class="my-8" @click="$router.push('/')" height="40px" color="#00616D">Home</v-btn>
     </v-container>
   </div>
 </template>
