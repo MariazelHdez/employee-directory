@@ -2,7 +2,8 @@
     <v-data-table dense class="py-5 px-0 d-table" hide-default-footer :items="items" :headers="headers"
         :options.sync="options" :items-per-page="itemsPerPage" hide-default-header mobile-breakpoint="0">
         <template v-slot:header="{ props }">
-            <th class="data-header py-3 pl-3 " v-for="head in props.headers">{{ head.text }}
+            <th class="data-header py-3 pl-3 " v-for="head in props.headers">
+                {{$t('components.grid')[head.text] ? $t('components.grid')[head.text] : head.text }}
             </th>
         </template>
         <template v-slot:body="{ items }">
@@ -21,8 +22,8 @@
                             <label class="full-name">{{ item.formatted_name }}</label>
                         </a>
                     </td>
-                    <td v-if="divisions === false" class="default-cursor"> {{ item.division }} </td>
-                    <td class="default-cursor"> {{ item.title }} </td>
+                    <td class="default-cursor">  {{$t('components.positions_api')[item.title] ? $t('components.positions_api')[item.title] : item.title }} </td>
+                    <td v-if="divisions === false" class="default-cursor">  {{ ($t('components.divisions_api')[item.division]) ? $t('components.divisions_api')[item.division] : item.division }} </td>
                     <td class="default-cursor"> {{ item.email }}</td>
                     <td class="default-cursor"> <a :href="getPhone(item.phone_office)"
                             :class="{ telephone: check === true, 'telephone-desktop': check === false }"> {{
@@ -90,14 +91,18 @@ export default {
         },
 
         getPhone(number) {
-            const find = "-";
-            const reg = new RegExp(find, "g");
-            const numberFormatted = number.replace(reg, "");
-            const link = "tel:" + numberFormatted;
+            if(number != null){
+                const find = "-";
+                const reg = new RegExp(find, "g");
+                const numberFormatted = number.replace(reg, "");
+                const link = "tel:" + numberFormatted;
 
-            if (this.mobileCheck === false) {
-                return
-            } else { return String(link); }
+                if (this.mobileCheck === false) {
+                    return
+                } else { return String(link); }
+            }else{
+                return '';
+            }
         },
 
         cleanParam(param) {

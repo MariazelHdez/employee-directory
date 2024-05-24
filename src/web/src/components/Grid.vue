@@ -8,22 +8,27 @@
       <v-breadcrumbs class="mt-6 mb-8 breadcrumbs px-0" :items="breadcrumbsList">
         <template v-slot:item="{ item }">
           <v-breadcrumbs-item :href="item.link">
-            {{ item.name }}
+            {{
+              $t('components.departments_api')[item.name] ?
+                $t('components.departments_api')[item.name] : ( ($t('components.divisions_api')[item.name]) ?
+                  $t('components.divisions_api')[item.name] : ( ($t('components.branch_api')[item.name]) ?
+                    $t('components.branch_api')[item.name] : $t(item.name)))
+            }}
           </v-breadcrumbs-item>
         </template>
       </v-breadcrumbs>
 
       <v-row>
         <v-col cols="12" md="2" class="d-flex align-center justify-start">
-          <h4 class="">Group by: </h4>
+          <h4 class="">{{ $t("components.grid.group_by") }}: </h4>
         </v-col>
         <v-col cols="12" md="8">
           <v-chip-group v-model="selection" center-active mandatory>
             <v-row>
               <v-col class="d-flex flex-column align-sm-center justify-sm-space-around flex-sm-row justify-md-start">
-                <v-chip label outlined color="#00616D">See all government employees</v-chip>
-                <v-chip label outlined color="#00616D">Location</v-chip>
-                <v-chip label outlined color="#00616D">Position</v-chip>
+                <v-chip label outlined color="#00616D">{{ $t("components.grid.see_all") }}</v-chip>
+                <v-chip label outlined color="#00616D">{{ $t("components.grid.location") }}</v-chip>
+                <v-chip label outlined color="#00616D">{{ $t("components.grid.position") }}</v-chip>
               </v-col>
             </v-row>
           </v-chip-group>
@@ -37,16 +42,16 @@
 
       <div class="pt-6 pb-n12 mt-10 d-flex flex-column align-start justify-center">
         <div v-if="results">
-          <h2 class="px-0" style="font-size: 34px !important;">There are no results</h2>
+          <h2 class="px-0" style="font-size: 34px !important;">{{ $t("components.grid.no_results") }}</h2>
         </div>
         <div v-else class="d-flex align-center justify-start">
-          <h2 class="px-0" style="font-size: 34px !important;">{{ div }}</h2>
-          <h3 class="ml-4">( {{ divisionLength }} Results )</h3>
+          <h2 class="px-0" style="font-size: 34px !important;">   {{ ($t('components.divisions_api')[div]) ? $t('components.divisions_api')[div] : div }}    </h2>
+          <h3 class="ml-4">( {{ divisionLength }} {{ $t("components.grid.results") }} )</h3>
         </div>
 
         <div v-if="branch !== 'All branches'" class=" d-flex align-center justify-start">
-          <h2 style="font-size: 25px !important;">{{ branch }}</h2>
-          <h3 style="font-size: 16px !important;" class="ml-4">( {{ totalLength }} Results )</h3>
+          <h2 style="font-size: 25px !important;"> {{ ($t('components.branch_api')[branch]) ? $t('components.branch_api')[branch] : branch }} </h2>
+          <h3 style="font-size: 16px !important;" class="ml-4">( {{ totalLength }} {{ $t("components.grid.results") }} )</h3>
         </div>
       </div>
       <div class="text-center loading" v-show="loading">
@@ -209,29 +214,40 @@ export default {
       var reg = new RegExp(find, 'g');
       let arr = this.$route.meta.breadcrumb;
       const dynamicBreadcrumb = arr.filter(({ dynamic }) => !!dynamic);
+    
       dynamicBreadcrumb.forEach((element => {
-        if (element.name == 'Department') {
-          element.name = this.department;
-          element.link = '/find-employee/' + this.department.replace(reg, '-')
-        } else if (element.name == 'Division') {
-          if (this.div === 'Not division') {
-            element.name = 'Employees who are not assigned a division'
-            element.link = null
-          } else element.name = this.div;
+        switch (element.name) {
+          case  'breadcrumbs.department':
+            element.name = this.department.trim();
+            element.link = '/find-employee/' + this.department.replace(reg, '-')
+            break;
+          case 'breadcrumbs.division':
+            if (this.div === 'Not division') {
+              element.name = 'Employees who are not assigned a division'
+              element.link = null
+            } else{ 
+              element.name = this.div.trim();
+            }
 
-          if (this.branch !== 'All branches') {
-
-            element.link = ('/find-employee/' + this.department + '/' + this.div).replace(reg, '-') + '/all-branches'
-          } else {
-
-            element.link = null
-          }
-        } else if (element.name == 'Branch') {
-          if (this.branch === 'All branches') {
-            element.name = 'Employees who are not assigned a branch'
-          } else {
-            element.name = this.branch;
-          }
+            if (this.branch !== 'All branches') {
+              element.link = ('/find-employee/' + this.department + '/' + this.div).replace(reg, '-') + '/all-branches'
+            } else {
+              element.link = null
+            }
+            break;
+          case 'breadcrumbs.branch':
+            switch (this.branch) {
+              case  'All branches':
+                element.name = 'All branches'
+                break;
+              case  'All branches':
+                element.name = 'All branches'
+                break;
+              default:
+                element.name = this.iibranch;
+                break;
+            }
+            break;
         }
       }))
       arr = arr.filter(item => item.name !== null)

@@ -9,7 +9,7 @@
         </v-col-->
         <v-col cols="12" sm="7" class="align-center justify d-flex pl-2">
           <h2 class="mb-n1 text-responsive" style="color: #522a44 !important; font-size: 32px !important">
-            {{ title }}
+            {{$t('components.departments_api')[title] ? $t('components.departments_api')[title] : title }}
           </h2>
         </v-col>
       </v-row>

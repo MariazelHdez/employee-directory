@@ -8,16 +8,18 @@
                         <v-card outlined color="transparent">
                             <li>
                                 <a :class="{ 'branch-pressed': checkHover == parent_item }"
-                                    @click="activateBranches(parent_item)" :key="id" class="division">{{
-                                        parent_item
-                                    }}</a>
+                                    @click="activateBranches(parent_item)" :key="id" class="division">
+                                    {{ ($t('components.divisions_api')[parent_item]) ? $t('components.divisions_api')[parent_item] : parent_item }} 
+                                </a>
                             </li>
                             <v-expand-transition>
                                 <ul v-if="checkHover === parent_item || check === parent_item">
                                     <li class="py-1" v-for="(value, index, id) in item" :key="id">
                                         <a :class="{ 'branch-pressed': checkClass === index }"
                                             :href="generateUrl('branch', index, parent_item)"
-                                            class="branch my-2 px-0 py-3">{{ index }}</a>
+                                            class="branch my-2 px-0 py-3">
+                                            {{ ($t('components.branch_api')[index]) ? $t('components.branch_api')[index] : index }} 
+                                        </a>
                                     </li>
                                 </ul>
                             </v-expand-transition>
@@ -65,7 +67,7 @@ export default {
             this.check = division
         },
         generateUrl(type, param, index) {
-
+            
             const urlLocation = String(window.location.href)
             let url = urlLocation.split(window.location.pathname)
 
@@ -81,30 +83,25 @@ export default {
             let department = this.department.replace(reg, '-')
             let indexFormatted = index.replace(reg, '-')
             let paramFormatted = param.replace(reg, '-')
-
             if (indexFormatted === 'Employees-who-are-not-assigned-a-division') {
                 indexFormatted = 'not-division'
             }
-
-            if (type === 'division') {
-
-
-                if (indexFormatted === 'not-division') {
-                    return url + '/find-employee/' + department + '/not-division/all-branches'
-                }
-                return url + '/find-employee/' + department + '/' + indexFormatted + '/all-branches'
-
-            } else if (type === 'branch') {
-
-                if (paramFormatted !== 'Employees-who-are-not-assigned-a-branch' && indexFormatted !== 'not-division') {
-
-                    return url + '/find-employee/' + department + '/' + indexFormatted + '/' + paramFormatted
-
-                } else {
-
+            switch (type) {
+                case 'division':
+                    if (indexFormatted === 'not-division') {
+                        return url + '/find-employee/' + department + '/not-division/all-branches'
+                    }
                     return url + '/find-employee/' + department + '/' + indexFormatted + '/all-branches'
-
-                }
+                    break;
+                case 'branch':
+                    if (paramFormatted === 'Employees-who-are-not-assigned-a-branch') {
+                        paramFormatted = 'not-branch'
+                    }
+                    return url + '/find-employee/' + department + '/' + indexFormatted + '/' + paramFormatted
+                    break;
+                default:
+                return url + '/find-employee/' + department + '/' + indexFormatted + '/all-branches'
+                    break;
             }
         },
         getDataFromApi() {

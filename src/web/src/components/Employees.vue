@@ -28,7 +28,7 @@
         <template v-slot:item="{ item }">
 
           <v-breadcrumbs-item :href="item.link">
-            {{ item.name }}
+            {{ $t(item.name) }}
           </v-breadcrumbs-item>
 
         </template>
@@ -38,7 +38,7 @@
           <v-row>
             <v-col cols="12" sm="12" class="align-center justify d-flex">
               <h2 class="mb-n1 text-responsive" style="color: #522a44 !important; font-size: 32px !important">
-                Browse the employee directory by department
+                {{ $t("components.employees.browse_directory_by_department") }}
               </h2>
             </v-col>
           </v-row>
@@ -50,15 +50,11 @@
             <v-card :href="indexUrl(index, items)" class="mx-auto employee-division-card" max-width="344" outlined>
               <v-card class="d-flex">
                 <v-list-item three-line class="icon-list">
-                  <!--v-list-item-avatar tile size="100" min-height="100" height="100%" class="icon-avatar"
-                    :style="{ 'background-color': hover ? '#DC4001' : '#512A44' }">
-                    <div style="height:100%;">
-                      <IconLoader style="transform:scale(1.4)" :image="'icon'" />
-                    </div>
-                  </v-list-item-avatar-->
                   <v-list-item-content>
                     <v-list-item-title class="text-h6  ma-2 center-items">
-                      <a class="index-text department-link">{{ index }}</a>
+                      <a class="index-text department-link">             
+                        {{$t('components.departments_api')[index] ? $t('components.departments_api')[index] : index }}   
+                      </a>
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
@@ -164,6 +160,7 @@ export default {
 }
 a.department-link{
   color:#005a65;
+  white-space: normal; 
 }
 a.department-link:visited{
   color:#643f5d;

@@ -7,28 +7,28 @@
             <v-breadcrumbs class="mt-6 mb-8 breadcrumbs px-0" :items="breadcrumbsList">
                 <template v-slot:item="{ item }">
                     <v-breadcrumbs-item :href="item.link">
-                        {{ item.name }}
+                        {{ $t(item.name) }}
                     </v-breadcrumbs-item>
                 </template>
             </v-breadcrumbs>
-            <h2 v-if="results && department !== 'Any department'" class="px-0" style="font-size: 34px !important;">Your search for {{ this.searchTitle.replace(/-/g, " ") }} in the department {{this.department}} had no results.</h2>
-            <h2 v-else-if="results" class="px-0" style="font-size: 34px !important;">Your search for {{ this.searchTitle.replace(/-/g, " ") }}  has no results.</h2>
-            <h2 v-else-if="!results && department !== 'Any department'" class="px-0" style="font-size: 34px !important;">Your search for {{ this.searchTitle.replace(/-/g, " ") }} in the department {{this.department}} found {{ this.itemsLength }} results.</h2>
-            <h2 v-else class="mt-8">Your search for {{ this.searchTitle.replace(/-/g, " ") }} found {{ this.itemsLength }} results.
+            <h2 v-if="results && department !== 'Any department'" class="px-0" style="font-size: 34px !important;">{{ $t("components.employee_search.no_results_by_department.body.part1") }} {{ this.searchTitle.replace(/-/g, " ") }} {{ $t("components.employee_search.no_results_by_department.body.part2") }} {{$t('components.departments_api')[this.department] ? $t('components.departments_api')[this.department] : this.department }} {{ $t("components.employee_search.no_results_by_department.body.part3") }}</h2>
+            <h2 v-else-if="results" class="px-0" style="font-size: 34px !important;">{{ $t("components.employee_search.no_results.body.part1") }} {{ this.searchTitle.replace(/-/g, " ") }}  {{ $t("components.employee_search.no_results.body.part2") }}</h2>
+            <h2 v-else-if="!results && department !== 'Any department'" class="px-0" style="font-size: 34px !important;">{{ $t("components.employee_search.results_by_department.body.part1") }} {{ this.searchTitle.replace(/-/g, " ") }} {{ $t("components.employee_search.results_by_department.body.part2") }} {{$t('components.departments_api')[this.department] ? $t('components.departments_api')[this.department] : this.department }} {{ $t("components.employee_search.results_by_department.body.part3") }} {{ this.itemsLength }} {{ $t("components.employee_search.results_by_department.body.part4") }}</h2>
+            <h2 v-else class="mt-8">{{ $t("components.employee_search.results.body.part1") }} {{ this.searchTitle ? this.searchTitle.replace('any-employee', $t("components.employee_search.results.body.any_employee")).replace(/-/g, " ") : '' }} {{ $t("components.employee_search.results.body.part2") }} {{ this.itemsLength }} {{ $t("components.employee_search.results.body.part3") }}
             </h2>
             <v-row v-if="!results">
                 <v-col cols="12" md="2" class="d-flex align-center justify-start">
-                    <h4 class="">Group by: </h4>
+                    <h4 class="">{{ $t("components.employee_search.labels.group_by") }}: </h4>
                 </v-col>
                 <v-col cols="12" md="8">
                     <v-chip-group v-model="selection" center-active mandatory>
                         <v-row>
                             <v-col
                                 class="d-flex flex-column align-sm-center justify-sm-space-around flex-sm-row justify-md-start">
-                                <v-chip label outlined color="#00616D">See all government employees</v-chip>
-                                <v-chip label outlined color="#00616D">Department</v-chip>
-                                <v-chip label outlined color="#00616D">Location</v-chip>
-                                <v-chip label outlined color="#00616D">Position</v-chip>
+                                <v-chip label outlined color="#00616D">{{ $t("components.employee_search.labels.see_all") }}</v-chip>
+                                <v-chip label outlined color="#00616D">{{ $t("components.employee_search.labels.department") }}</v-chip>
+                                <v-chip label outlined color="#00616D">{{ $t("components.employee_search.labels.location") }}</v-chip>
+                                <v-chip label outlined color="#00616D">{{ $t("components.employee_search.labels.position") }}</v-chip>
                             </v-col>
                         </v-row>
                     </v-chip-group>
@@ -181,12 +181,13 @@ export default {
             return param;
         },
         cleanLocation(location) {
-
-            if (location[0] === ',') {
-                let link = location.slice(1);
-                return link.replace(/['"]+/g, '')
-            } else {
-                return location.replace(/['"]+/g, '')
+            if(location != null){
+                if (location[0] === ',') {
+                    let link = location.slice(1);
+                    return link.replace(/['"]+/g, '')
+                } else {
+                    return location.replace(/['"]+/g, '')
+                }
             }
         },
         updateBreadCrumbs() {

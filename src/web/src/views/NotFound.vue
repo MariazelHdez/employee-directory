@@ -9,32 +9,29 @@
       <v-breadcrumbs class="mt-6 breadcrumbs ml-n5" :items="breadcrumbsList">
         <template v-slot:item="{ item }">
           <v-breadcrumbs-item class="z-indx" :href="item.link">
-            {{ item.name }}
+            {{ $t(item.name) }}
           </v-breadcrumbs-item>
         </template>
       </v-breadcrumbs>
 
-      <h1 class="my-16" style="font-weight:600 !important; font-size: 34px;">Page not found</h1>
+      <h1 class="my-16" style="font-weight:600 !important; font-size: 34px;">{{ $t("components.not_found.page_not_found") }}</h1>
       <v-card class="not-found-card mb-6" color="transparent" outlined>
-        <h2>Sorry, that page isn’t here.</h2>
-        <p>You didn’t do anything wrong. We may have moved the page you're looking for somewhere else.</p>
+        <h2>{{ $t("components.not_found.page_is_not_here.title") }}</h2>
+        <p>{{ $t("components.not_found.page_is_not_here.body") }}</p>
       </v-card>
       <v-card class="not-found-card mb-6" color="transparent" outlined>
-        <h2>Did you follow a link from here?</h2>
-        <p>If you reached this page from another part of Yukon.ca, <a
-            href="https://yukon.ca/en/your-government/contact-and-follow-government/contact-government">let us know</a> so
-          we can correct our mistake.</p>
+        <h2>{{ $t("components.not_found.reached_from_inside.title") }}</h2>
+        <p>{{ $t("components.not_found.reached_from_inside.body.part1") }}<a
+            :href="$t('yukon_urls.contact_government')">{{ $t("components.not_found.reached_from_inside.body.part2") }}</a>{{ $t("components.not_found.reached_from_inside.body.part3") }}</p>
       </v-card>
       <v-card class="not-found-card mb-6" color="transparent" outlined>
-        <h2>Did you follow a link from another site?</h2>
-        <p>Links from other sites can sometimes be old or misspelled. <a
-            href="https://yukon.ca/en/your-government/contact-and-follow-government/contact-government">Let us know</a>
-          where you came from and we can try to contact the other site to fix the problem.</p>
+        <h2>{{ $t("components.not_found.reached_from_outside.title") }}</h2>
+        <p>{{ $t("components.not_found.reached_from_outside.body.part1") }}<a
+            :href="$t('yukon_urls.contact_government')">{{ $t("components.not_found.reached_from_outside.body.part2") }}</a>{{ $t("components.not_found.reached_from_outside.body.part3") }}</p>
       </v-card>
       <v-card class="not-found-card mb-6" color="transparent" outlined>
-        <h2>Did you type the URL?</h2>
-        <p>You may have typed the address (URL) wrong. Check to make sure you’ve got the exact right spelling or
-          capitalization.</p>
+        <h2>{{ $t("components.not_found.address_wrong_message.title") }}</h2>
+        <p>{{ $t("components.not_found.address_wrong_message.body") }}</p>
       </v-card>
       <v-btn class="my-8" @click="$router.push('/')" height="40px" color="#00616D">Home</v-btn>
     </v-container>

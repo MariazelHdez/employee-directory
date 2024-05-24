@@ -1,7 +1,7 @@
 <template>
     <div class="full-width yellow-border white-bg pl-0 pt-5 find-employee">
         <v-container class="container-content">
-            <h1 v-if="title !== null">Find a government employee</h1>
+            <h1 v-if="title !== null">{{ $t("components.search_bar_header.title") }}</h1>
             <v-banner v-if="info" class="info_find-employee">
                 <!--p>
                     <strong>I know who I am looking for</strong>
@@ -20,7 +20,7 @@
                     Scroll down the page and select the department you want to browse.
                 </p-->
                 <p>
-                    Enter a person's name, position title, email or phone number in the search bar.
+                    {{ $t("components.search_bar_header.search.label") }}
                 </p>
             </v-banner>
 
@@ -29,7 +29,7 @@
                         <v-row no-gutters class="center-search-bar">
                             <v-col cols="9" md="5" sm="8" xs="9">
                                 <v-text-field class="input-with-button" :items="item" v-model="nameSearch" dense=""
-                                    background-color="#F1F1F1" outlined="outlined" flat="" label="Keywords" solo>
+                                    background-color="#F1F1F1" outlined="outlined" flat="" :label="$t('components.search_bar_header.search.input_placeholder')" solo>
                                 </v-text-field>
                             </v-col>
                             <v-col cols="1"  md="1" sm="2">

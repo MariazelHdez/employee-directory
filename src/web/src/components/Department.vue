@@ -11,7 +11,7 @@
       <v-breadcrumbs class="mt-6 breadcrumbs px-0" :items="breadcrumbsList">
         <template v-slot:item="{ item }">
           <v-breadcrumbs-item :href="item.link">
-            {{ item.name }}
+            {{$t('components.departments_api')[item.name] ? $t('components.departments_api')[item.name] : $t(item.name) }}
           </v-breadcrumbs-item>
         </template>
       </v-breadcrumbs>
@@ -26,31 +26,29 @@
                 <IconLoader :image="'icon'" :stroke="'purple-stroke'" >
               </div-->
               <div class="d-flex align-center justify-center" style="width:100%">
-                <h2 class="py-4" style="color:#522A44!important; font-size: 32px; text-align: center;">{{ title }}</h2>
+                <h2 class="py-4" style="color:#522A44!important; font-size: 32px; text-align: center;"> {{$t('components.departments_api')[title] ? $t('components.departments_api')[title] : title }}</h2>
               </div>
             </v-card-actions>
 
             <v-card outlined color="transparent" class="flex-column pa-10">
-              <h2 v-if="!employeesNotFound" style="color:#522A44!important; font-size: 30px;">Browse employees by these
-                divisions</h2>
-              <div width="100%" v-else>
-                <h2 style="color:#522A44!important; font-size: 30px; text-align: center!important; width: 100%;">There
-                  are
-                  no results.</h2>
+              <h2 v-if="!employeesNotFound" style="color:#522A44!important; font-size: 30px;">{{ $t("components.department.labels.browse_employees_by_divisions") }}</h2>
+                <div width="100%" v-else>
+                <h2 style="color:#522A44!important; font-size: 30px; text-align: center!important; width: 100%;">{{ $t("components.department.labels.no_results") }}</h2>
               </div>
               <v-card outlined color="transparent" v-for="(item, parent_item, id) in items" :key="item.full_name"
                 class="px-8">
                 <v-card outlined color="transparent">
                   <li>
-                    <a @click="activateBranches(parent_item)" :key="id" class="division">{{
-                      parent_item
-                      }}</a>
+                    <a @click="activateBranches(parent_item)" :key="id" class="division">
+                      {{ ($t('components.divisions_api')[parent_item]) ? $t('components.divisions_api')[parent_item] : parent_item }} 
+                    </a>
                   </li>
                   <v-expand-transition>
                     <ul v-if="check === parent_item">
                       <li v-for="(item, index, id) in item" :key="id" class="py-2">
-                        <a :href="generateUrl('branch', index, parent_item)" class="my-2 px-0 py-3 branch">{{ index
-                          }}</a>
+                        <a :href="generateUrl('branch', index, parent_item)" class="my-2 px-0 py-3 branch">
+                          {{ ($t('components.branch_api')[index]) ? $t('components.branch_api')[index] : index }}
+                        </a>
                       </li>
                     </ul>
                   </v-expand-transition>
@@ -58,8 +56,7 @@
               </v-card>
               <div style="height:20px;"></div>
               <a v-if="!employeesNotFound" @click="toggleApiSearch" class="mb-2"
-                style="font-size: 22px; font-weight: 700;" :class="{ colorOnClick: checkGrid }">View a list of all
-                Department of {{ title }}</a>
+                style="font-size: 22px; font-weight: 700;" :class="{ colorOnClick: checkGrid }">{{ $t("components.department.labels.view_list") }} {{ $t('components.departments_api')[title] ? $t('components.departments_api')[title] : title }}</a>
             </v-card>
           </v-card>
           <v-card tile class="mx-auto mt-n3" height="12px" width="281px" color="#244C5A"></v-card>
@@ -68,24 +65,24 @@
       <div class="mt-7" v-if="checkGrid">
         <v-row v-if="!results">
           <v-col cols="12" md="2" class="d-flex align-center justify-start">
-            <h4 class="">Group by: </h4>
+            <h4 class="">{{ $t("components.department.labels.group_by") }}</h4>
           </v-col>
           <v-col cols="12" md="8">
             <v-chip-group v-model="selection" center-active mandatory>
               <v-row>
                 <v-col class="d-flex flex-column align-sm-center justify-sm-space-around flex-sm-row justify-md-start">
-                  <v-chip label outlined color="#00616D">See all government employees</v-chip>
-                  <v-chip label outlined color="#00616D">Location</v-chip>
-                  <v-chip label outlined color="#00616D">Position</v-chip>
+                  <v-chip label outlined color="#00616D">{{ $t("components.department.labels.see_all_employees") }}</v-chip>
+                  <v-chip label outlined color="#00616D">{{ $t("components.department.labels.location") }}</v-chip>
+                  <v-chip label outlined color="#00616D">{{ $t("components.department.labels.position") }}</v-chip>
                 </v-col>
               </v-row>
             </v-chip-group>
           </v-col>
         </v-row>
 
-        <h2 v-if="results" class="px-0" style="font-size: 34px !important;">There are no results</h2>
+        <h2 v-if="results" class="px-0" style="font-size: 34px !important;">{{ $t("components.department.labels.no_results") }}</h2>
 
-        <h2 v-else class="mt-3" style="font-size: 30px;"> {{ divisionLength }} Results </h2>
+        <h2 v-else class="mt-3" style="font-size: 30px;"> {{ divisionLength }} {{ $t("components.department.labels.results") }} </h2>
 
         <div class="text-center loading" v-show="loading">
           <v-progress-circular :size="50" color="primary" indeterminate></v-progress-circular>

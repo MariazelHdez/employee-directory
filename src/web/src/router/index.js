@@ -73,12 +73,12 @@ const routes = [
     component: EmployeeDetail,
     meta: {
       breadcrumb: [
-        {name: 'Yukon.ca home', link: 'https://yukon.ca/'},
-        {name: 'Find a government employee', link: '/Find-Employee'},
-        {name: 'Department', link: '/find-employee/Department' , dynamic: true},
-        {name: 'Division', link: '/find-employee/Department/Division' , dynamic: true},
-        {name: 'Branch', link: '/find-employee/Department/Division/Branch' , dynamic: true},
-        {name: 'Username', dynamic: true}
+        {name: 'breadcrumbs.home', link: 'https://yukon.ca/'},
+        {name: 'breadcrumbs.find_a_government_employee', link: '/Find-Employee'},
+        {name: 'breadcrumbs.department', link: '/find-employee/Department' , dynamic: true},
+        {name: 'breadcrumbs.division', link: '/find-employee/Department/Division' , dynamic: true},
+        {name: 'breadcrumbs.branch', link: '/find-employee/Department/Division/Branch' , dynamic: true},
+        {name: 'breadcrumbs.username', dynamic: true}
       ]
     }
   },
@@ -88,10 +88,10 @@ const routes = [
     component: EmployeeSearch,
     meta: {
       breadcrumb: [
-        {name: 'Yukon.ca home', link: 'https://yukon.ca/'},
-        {name: 'Find a government employee', link: '/Find-Employee'},
-        {name: 'Department', link: '/find-employee/Department' , dynamic: true},
-        {name: 'Search', dynamic: true},
+        {name: 'breadcrumbs.home', link: 'https://yukon.ca/'},
+        {name: 'breadcrumbs.find_a_government_employee', link: '/Find-Employee'},
+        {name: 'breadcrumbs.department', link: '/find-employee/Department' , dynamic: true},
+        {name: 'breadcrumbs.search', dynamic: true},
       ]
     }
   },
@@ -101,11 +101,11 @@ const routes = [
     component: Grid,
     meta: {
       breadcrumb: [
-        {name: 'Yukon.ca home', link: 'https://yukon.ca/'},
-        {name: 'Find a government employee', link: '/find-employee'},
-        {name: 'Department', link: '/find-employee/Department', dynamic: true},
-        {name: 'Division', link: '/find-employee/Department/Division', dynamic: true},
-        {name: 'Branch', dynamic: true}
+        {name: 'breadcrumbs.home', link: 'https://yukon.ca/'},
+        {name: 'breadcrumbs.find_a_government_employee', link: '/find-employee'},
+        {name: 'breadcrumbs.department', link: '/find-employee/Department', dynamic: true},
+        {name: 'breadcrumbs.division', link: '/find-employee/Department/Division', dynamic: true},
+        {name: 'breadcrumbs.branch', dynamic: true}
       ]
     }
   },
@@ -116,9 +116,9 @@ const routes = [
     
     meta: {
       breadcrumb: [
-        {name: 'Yukon.ca home', link: 'https://yukon.ca/'},
-        {name: 'Find a government employee', link: '/find-employee'},
-        {name: 'Department', dynamic: true}
+        {name: 'breadcrumbs.home', link: 'https://yukon.ca/'},
+        {name: 'breadcrumbs.find_a_government_employee', link: '/find-employee'},
+        {name: 'breadcrumbs.department', dynamic: true}
       ]
     }
   },
@@ -128,23 +128,23 @@ const routes = [
     component: NotFound,
     meta: {
       breadcrumb: [
-        {name: 'Yukon.ca home', link: 'https://yukon.ca/'},
-        {name: 'Find Employee', link: `/find-employee`},
-        {name: 'Page not found'},
+        {name: 'breadcrumbs.home', link: 'https://yukon.ca/'},
+        {name: 'breadcrumbs.find_employee', link: `/find-employee`},
+        {name: 'breadcrumbs.page_not_found'},
       ]
     }
   },
   {
     path: "/find-employee/",
-    name: "Find a government employee",
+    name: "Find a government employee ",
     component: Employees,
     child: [
 
     ],
     meta: {
       breadcrumb: [
-        {name: 'Yukon.ca home', link: 'https://yukon.ca/'},
-        {name: 'Find a government employee'},
+        {name: 'breadcrumbs.home', link: 'https://yukon.ca/'},
+        {name: 'breadcrumbs.find_a_government_employee'},
       ]
     }
   },
