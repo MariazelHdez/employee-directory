@@ -49,7 +49,7 @@ export default {
     mounted() {
         
         if (this.divisions === false) {
-            this.headers.splice(2,0,{ text: "Division", value: "division" },)
+            this.headers.splice(1,0,{ text: "Division", value: "division" },)
         }
     },
     data() {

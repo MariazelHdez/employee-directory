@@ -275,3 +275,22 @@ a:visited{
 a:hover{
   color:#008392 !important;
 }
+
+.drag-row{
+  border: #e0e0e0 1px solid;
+  border-radius: 4px;
+}
+
+.bar-title{
+  padding-left: 15% !important;
+  margin-right: 5%;
+}
+
+.mw-5{
+  max-width: 5%;
+}
+
+.loadingText{
+  margin-top: 200px;
+  width: 250px
+}

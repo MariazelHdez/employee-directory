@@ -16,6 +16,7 @@
     "glob-parent": ">=5.1.2",
     "leaflet-control-geocoder": "2.4.0",
     "vue": "2.6.14",
+    "vue-infinite-scroll": "^2.0.2",
     "vue-matomo": "4.2.0",
     "vue-router": "3.5.3",
     "vue2-leaflet": "2.7.1",

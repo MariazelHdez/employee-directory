@@ -27,6 +27,7 @@ Environment variables should never be checked into the repository!
 - DIVISIONSJSON= (URL of the API to get the information of the divisions)
 - EMPLOYEEJSON= (URL of the API to get the information of the employees)
 - ESRI_KEY= (Key for esri)
+- APP_STAFF_DIRECTORY_URL= (URL of Directory Api server)
 
 ## Building the container image
 

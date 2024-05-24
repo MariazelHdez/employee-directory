@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog :value="dialog" persistent max-width="600px">
+    <v-dialog :value="dialog" persistent max-width="800px">
       <v-card>
         <v-card-title>
           <span class="text-h5">{{ title }}</span>
@@ -13,10 +13,10 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="close">
+          <v-btn color="grey" text @click="close">
             Close
           </v-btn>
-          <v-btn color="blue darken-1" text @click="save">
+          <v-btn color="blue" text @click="save">
             Save
           </v-btn>
         </v-card-actions>

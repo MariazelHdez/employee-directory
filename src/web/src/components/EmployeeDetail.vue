@@ -1,5 +1,5 @@
 <template>
-  <div class="books">
+  <div class="employee-details">
     <SearchBarHeader />
 
     <DepartmentHeader :title="this.department" :image="this.department.toLowerCase()" />
@@ -34,20 +34,20 @@
                   Department:
                   <a :href="generateUrl('department', 'n/a', 'n/a')">{{
                     item.department
-                  }}</a>
+                    }}</a>
                 </h3>
               </v-col>
-              <v-col class="mb-0 pt-2 pb-0" cols="12" md="6" v-if="checkStatus(item.division)" >
+              <v-col class="mb-0 pt-2 pb-0" cols="12" md="6" v-if="checkStatus(item.division)">
                 <h3 class="mb-0">
                   Division: {{ item.division }}
                 </h3>
               </v-col>
-              <v-col class="mb-0 pt-2 pb-0" cols="12" md="6"  v-if="checkStatus(item.branch)">
+              <v-col class="mb-0 pt-2 pb-0" cols="12" md="6" v-if="checkStatus(item.branch)">
                 <h3 class="mb-0">
                   Branch:
                   <a :href="generateUrl('branch', item.branch, item.division)">{{
                     item.branch
-                  }}</a>
+                    }}</a>
                 </h3>
               </v-col>
               <v-col class="mb-0 pt-2 pb-0" cols="12" md="6" v-if="checkStatus(item.unit)">
@@ -57,25 +57,26 @@
               </v-col>
             </v-row>
           </v-card>
-          <v-card class="my-5 py-1 pb-3 px-5 employee-detail" elevation="1">
+          <v-card class="my-5 py-1 pb-3 px-5 employee-detail" elevation="1"
+            v-if="checkStatus(item.phone_office) || checkStatus(item.email) || checkStatus(item.fax_office) ">
             <h2 class="mt-4 mb-2">Contact:</h2>
             <v-row>
               <v-col class="mb-0 pt-2 pb-0" cols="12" md="6" v-if="checkStatus(item.phone_office)">
-                <h3  class="mb-0">
+                <h3 class="mb-0">
                   Phone office:
                   <a :href="getPhone(item.phone_office)">{{
                     item.phone_office
-                  }}</a>
+                    }}</a>
                 </h3>
               </v-col>
-              <v-col class="mb-0 pt-2 pb-0" cols="12" md="6"  v-if="checkStatus(item.email)">
+              <v-col class="mb-0 pt-2 pb-0" cols="12" md="6" v-if="checkStatus(item.email)">
                 <h3 class="mb-0">
                   Email address:
                   <a :href="getMail(item.email)">{{ item.email }}</a>
                 </h3>
               </v-col>
               <v-col class="mb-0 pt-2 pb-0" cols="12" md="6" v-if="checkStatus(item.fax_office)">
-                <h3  class="mb-0">
+                <h3 class="mb-0">
                   Fax office: <span>{{ item.fax_office }}</span>
                 </h3>
               </v-col>
@@ -89,12 +90,13 @@
                   Manager:
                   <a :href="generateUrl('manager', item.manager, 'n/a')">{{
                     item.manager
-                  }}</a>
+                    }}</a>
                 </h3>
               </v-col>
             </v-row>
           </v-card>
-          <v-card class="my-5 py-1 pb-3 px-5 employee-detail" elevation="1">
+          <v-card class="my-5 py-1 pb-3 px-5 employee-detail" elevation="1"
+            v-if="checkStatus(item.address) || checkStatus(item.community) || checkStatus(item.postal_code) || checkStatus(item.mailcode)">
             <h2 class="mt-4 mb-2">Location</h2>
             <v-row>
               <v-col class="mb-1" cols="12" md="6">

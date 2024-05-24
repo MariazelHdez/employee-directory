@@ -111,7 +111,7 @@ export default {
             const find = ' ';
             const reg = new RegExp(find, 'g');
 
-            let name = this.nameSearch.replace(/\s+/g, '.').trim()
+            let name = this.nameSearch.replace(/\s+/g, '%20').trim()
             let department = this.departmentSearch.replace(reg, '-').replace(/\//g, '').toLowerCase()
 
 

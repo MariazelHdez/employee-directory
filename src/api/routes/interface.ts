@@ -4,6 +4,7 @@ export interface EmployeeTable {
     title: string
     division: string
     branch: string
+    weight: any
     email: String
     phone_office: String
     department: string
@@ -13,4 +14,5 @@ export interface EmployeeTable {
     value: number
     address: string
     community: string
+    id:any
 }
