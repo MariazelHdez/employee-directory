@@ -1,30 +1,6 @@
 <template>
   <v-app>
     <div id="app">
-      <v-app-bar style="
-
-box-shadow: 1px 3px 3px 0px rgba(163,163,163,0.33) !important;
--webkit-box-shadow: 1px 3px 3px 0px rgba(163,163,163,0.33) !important;
--moz-box-shadow: 1px 3px 3px 0px rgba(163,163,163,0.33) !important;
-    
-    " color="#fff" flat height="77" max-height="77" class="shadow">
-        <v-container class="px-0">
-          <div class="header-container">
-            <v-row align-content="space-between" justify="space-between" align="center">
-              <a :href="$t('yukon_urls.home')"><img src="/yukon.svg" style="margin-top:10px;" height="63" /></a>
-              <v-toolbar-title>
-                <v-progress-circular :class="loadingClass" indeterminate color="#f3b228" size="20" width="2"
-                  class="ml-4"></v-progress-circular>
-              </v-toolbar-title>
-
-
-              <v-btn text @click="toggleLocale(locale)" class="text-capitalize">
-                {{ locale === 'en' ? 'Français' : 'English' }}
-              </v-btn>
-            </v-row>
-          </div>
-        </v-container>
-      </v-app-bar>
       <div class="text-center loading" v-show="loading">
         <v-progress-circular :size="75" color="primary" indeterminate>
           <span class="loadingText">Redirecting to logout platform</span>
@@ -85,7 +61,9 @@ box-shadow: 1px 3px 3px 0px rgba(163,163,163,0.33) !important;
       <v-app-bar flat height="77" max-height="77" class="shadow" color="white" elevation="2" dense>
         <v-app-bar-nav-icon @click="drawer = !drawer" v-show="!$vuetify.breakpoint.mdAndUp"></v-app-bar-nav-icon>
         <v-toolbar-title class="bar-title">
-          <a href="https://yukon.ca/"><img src="/yukon.svg" style="margin-top:10px;" height="63" /></a>
+          <a :href="$t('yukon_urls.home') "><img src="/yukon.svg" style="margin-top:10px;" height="63" /></a>
+          <v-progress-circular :class="loadingClass" indeterminate color="#f3b228" size="20" width="2" +
+            class="ml-4"></v-progress-circular>
         </v-toolbar-title>
         <v-btn text href="/settings/synonyms" v-show="$vuetify.breakpoint.mdAndUp" v-if="isAuthenticated">
           Synonyms
@@ -95,6 +73,9 @@ box-shadow: 1px 3px 3px 0px rgba(163,163,163,0.33) !important;
         </v-btn>
         <v-btn text href="/settings/exceptions" v-show="$vuetify.breakpoint.mdAndUp" v-if="isAuthenticated">
           Exceptions
+        </v-btn>
+        <v-btn text @click="toggleLocale(locale)" class="text-capitalize">
+          {{ locale === 'en' ? 'Français' : 'English' }}
         </v-btn>
         <v-spacer></v-spacer>
         <v-btn v-if="isAuthenticated" @click="logout" class="mr-10" v-show="$vuetify.breakpoint.mdAndUp">
